@@ -1,0 +1,50 @@
+{
+  "executedAt": "2026-10-08T04:18:07.767Z",
+  "scope": "Executed JavaScript engine assertions; browser UI, real interfaces and clinical behavior are not validated.",
+  "passed": 8,
+  "results": [
+    {
+      "name": "Complete referral: intake, send and acknowledgement",
+      "expected": "Assertions pass",
+      "actual": "PASS"
+    },
+    {
+      "name": "Missing fields remain assigned to coordinator and cannot send",
+      "expected": "Assertions pass",
+      "actual": "PASS"
+    },
+    {
+      "name": "Duplicate referral preserves one record and original payload",
+      "expected": "Assertions pass",
+      "actual": "PASS"
+    },
+    {
+      "name": "Timeout creates an owned exception without inferred completion",
+      "expected": "Assertions pass",
+      "actual": "PASS"
+    },
+    {
+      "name": "Human approval needs actor and reason; retry retains correlation ID",
+      "expected": "Assertions pass",
+      "actual": "PASS"
+    },
+    {
+      "name": "Acknowledgement before send and duplicate acknowledgement are rejected",
+      "expected": "Assertions pass",
+      "actual": "PASS"
+    },
+    {
+      "name": "Late acknowledgement reconciles an overdue referral",
+      "expected": "Assertions pass",
+      "actual": "PASS"
+    },
+    {
+      "name": "Audit sequence captures human actor and reason",
+      "expected": "Assertions pass",
+      "actual": "PASS"
+    }
+  ],
+  "artifactSha256": {
+    "referral-workflow.js": "c566c2259f42dba272b6704905a854fb22e9758eb0c3deceb371532f7498fca2"
+  }
+}

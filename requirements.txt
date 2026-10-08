@@ -1,0 +1,5 @@
+# Python >=3.10. No third-party Python packages are required.
+# Install/check this file with: python -m pip install -r requirements.txt
+# Node dependencies belong in package.json/package-lock.json, not this file.
+# Install them with npm ci, then npm run install:browsers.
+# See README.md and README-pipeline.md for the complete clean-machine setup.

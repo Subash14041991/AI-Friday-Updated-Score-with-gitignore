@@ -1,0 +1,12 @@
+{
+  "executedAt": "2026-10-08T06:29:30.450Z",
+  "result": "PASS",
+  "checks": [
+    "All local links exist",
+    "Architecture image loads",
+    "Expand/collapse eleven answers",
+    "Desktop and mobile have no horizontal overflow",
+    "Section navigation works",
+    "No browser script errors"
+  ]
+}

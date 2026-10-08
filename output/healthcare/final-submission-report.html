@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Healthcare Referral Architecture — Final Submission Report</title>
+  <style>
+    :root { --ink:#173047; --muted:#52677a; --line:#cbd7e1; --soft:#f1f6f9; --accent:#087f8c; --pale:#e6f5f5; --warn:#fff3dc; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:#e3eaee; color:var(--ink); font:13px/1.38 "Segoe UI",Arial,sans-serif; }
+    .page { width:min(100%,420mm); min-height:297mm; margin:16px auto; padding:12mm 14mm 15mm; background:#fff; position:relative; overflow:hidden; box-shadow:0 2px 14px #17304720; page-break-after:always; break-after:page; }
+    .page:last-child { page-break-after:auto; break-after:auto; }
+    .eyebrow { color:var(--accent); font-size:9px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; }
+    h1 { margin:4px 0 7px; font-size:23px; line-height:1.1; }
+    h2 { margin:11px 0 5px; color:#075b67; font-size:13px; }
+    h3 { margin:0 0 4px; font-size:10px; }
+    p { margin:3px 0 6px; }
+    .lede { color:var(--muted); font-size:10px; }
+    .columns { display:grid; grid-template-columns:1fr 1fr; gap:12px; align-items:start; }
+    .wide-left { grid-template-columns:1.08fr .92fr; }
+    .card { border:1px solid var(--line); border-radius:5px; padding:8px 9px; margin:5px 0; break-inside:avoid; }
+    .callout { background:var(--pale); border-left:4px solid var(--accent); padding:8px 10px; margin:7px 0; }
+    .callout.warn { background:var(--warn); border-left-color:#bd861a; }
+    ul,ol { padding-left:18px; margin:4px 0 6px; }
+    li { margin:2px 0; }
+    table { width:100%; border-collapse:collapse; table-layout:fixed; margin:6px 0; }
+    th,td { border:1px solid var(--line); padding:4px 5px; text-align:left; vertical-align:top; overflow-wrap:anywhere; }
+    th { background:var(--soft); color:#075b67; }
+    .metrics,.risks { font-size:8px; line-height:1.25; }
+    .metrics th:nth-child(1) { width:18%; } .metrics th:nth-child(2) { width:34%; } .metrics th:nth-child(3) { width:16%; } .metrics th:nth-child(4) { width:15%; } .metrics th:nth-child(5) { width:17%; }
+    .risks th:nth-child(1) { width:29%; } .risks th:nth-child(2) { width:54%; } .risks th:nth-child(3) { width:17%; }
+    .architecture { display:block; width:100%; height:85mm; margin:5px 0; border:1px solid var(--line); background:#fbfdfe; border-radius:5px; }
+    .box { fill:#fff; stroke:#58778b; stroke-width:1.5; rx:7; }
+    .boundary { fill:#f1f7fa; stroke:#7c9aab; stroke-width:1.5; rx:12; }
+    .core { fill:#f5f6f7; stroke:#6f8290; stroke-width:1.5; rx:7; }
+    .state { fill:#e8f5f6; stroke:#39838c; stroke-width:1.5; }
+    .title { font:700 14px "Segoe UI",Arial,sans-serif; fill:#173047; }
+    .text { font:12px "Segoe UI",Arial,sans-serif; fill:#29465b; }
+    .small { font:10px "Segoe UI",Arial,sans-serif; fill:#52677a; }
+    .flow { stroke:#355c73; stroke-width:1.7; fill:none; marker-end:url(#arr); }
+    .dash { stroke:#b07a19; stroke-width:1.6; stroke-dasharray:6 5; fill:none; marker-end:url(#arr); }
+    .footer { position:static; margin-top:16px; bottom:6mm; left:14mm; right:14mm; display:flex; justify-content:space-between; border-top:1px solid var(--line); padding-top:4px; color:var(--muted); font-size:8px; }
+    @media screen and (max-width:850px) { .page{min-height:0;padding:22px;margin:8px auto;overflow:visible}.columns,.wide-left{grid-template-columns:1fr}.footer{position:static;margin-top:22px}.architecture{height:auto;min-height:290px} }
+    @media print { @page{size:A3 landscape;margin:0} html,body{width:420mm;background:white;print-color-adjust:exact;-webkit-print-color-adjust:exact} body{font-size:9px}.page{width:420mm;min-height:297mm;margin:0;padding:10mm 13mm 14mm;box-shadow:none;overflow:visible}h1{font-size:20px}h2{font-size:11px}.metrics,.risks{font-size:7px}.architecture{height:78mm} }
+  
+.d1-page { font-size:15px; line-height:1.45; }
+.d1-page h2 { font-size:17px; margin-top:15px; }
+.d1-page .lede { font-size:12px; }
+.d1-page .columns { gap:24px; grid-template-columns:1fr 1.12fr; }
+.d1-page table { font-size:12px; line-height:1.4; }
+.d1-page th,.d1-page td { padding:7px; }
+.d1-page .columns > div:nth-child(2) th:nth-child(1) { width:18%; }
+.d1-page .columns > div:nth-child(2) th:nth-child(2) { width:32%; }
+.d1-page .columns > div:nth-child(2) th:nth-child(3) { width:14%; }
+.d1-page .columns > div:nth-child(2) th:nth-child(4) { width:15%; }
+.d1-page .columns > div:nth-child(2) th:nth-child(5) { width:21%; }
+.d1-page li { margin:5px 0; }
+@media print { .d1-page { font-size:13px; } .d1-page h2 { font-size:15px; } .d1-page table { font-size:11px; } }
+@media screen and (max-width:850px) { .d1-page .columns { grid-template-columns:1fr; } }
+
+/* D2 review layout */
+.d2-page { font-size:14px; line-height:1.4; }
+.d2-page h2 { font-size:16px; margin-top:12px; }
+.d2-page .columns { gap:22px; }
+.d2-page table { font-size:12px; line-height:1.35; }
+.d2-page th,.d2-page td { padding:7px; }
+.d2-page th:nth-child(1) { width:22%; }
+.d2-page th:nth-child(2),.d2-page th:nth-child(3) { width:39%; }
+.d2-page li { margin:4px 0; }
+@media print { .d2-page { font-size:12px; } .d2-page h2 { font-size:14px; } .d2-page table { font-size:11px; } }
+/* End D2 review layout */
+
+
+
+
+
+/* D3 review layout */
+.d3-page { font-size:14px; line-height:1.4; }
+.d3-page h2 { font-size:16px; margin-top:12px; }
+.d3-page .lede { font-size:13px; }
+.d3-diagram { display:block; width:100%; height:auto; max-height:430px; margin:14px 0; }
+.d3-summary { padding:10px 14px; background:#e6f5f5; border-left:4px solid #087f8c; }
+.d3-page .columns { gap:25px; grid-template-columns:1.1fr 1fr; }
+.d3-page table { font-size:12px; line-height:1.4; }
+.d3-page th,.d3-page td { padding:7px; }
+.d3-page th:nth-child(1) { width:25%; }
+.d3-page th:nth-child(2) { width:40%; }
+.d3-page th:nth-child(3) { width:35%; }
+.d3-page li { margin:4px 0; }
+@media print { .d3-page {font-size:12px;} .d3-page h2 {font-size:14px;} .d3-page table {font-size:11px;} .d3-diagram {max-height:370px;} }
+@media screen and (max-width:850px) { .d3-page .columns {grid-template-columns:1fr;} }
+/* End D3 review layout */
+
+/* D4 review layout */
+.d4-page {font-size:15px;line-height:1.45;}
+.d4-page h2 {font-size:17px;margin-top:15px;}
+.d4-page .lede {font-size:13px;}
+.d4-page .columns {gap:26px;}
+.d4-page table {font-size:13px;line-height:1.4;}
+.d4-page th,.d4-page td {padding:8px;}
+.d4-page th:nth-child(1) {width:25%;}
+.d4-page th:nth-child(2) {width:61%;}
+.d4-page th:nth-child(3) {width:14%;}
+.d4-page li {margin:5px 0;}
+@media print {.d4-page{font-size:13px;}.d4-page h2{font-size:15px;}.d4-page table{font-size:12px;}}
+/* End D4 review layout */
+
+/* D5 review layout */
+.d5-page {font-size:15px;line-height:1.4;}
+.d5-page h2 {font-size:17px;margin-top:14px;}
+.d5-page .lede {font-size:13px;}
+.d5-page table {font-size:13px;line-height:1.4;}
+.d5-page th,.d5-page td {padding:9px;}
+.d5-page table:first-of-type th:nth-child(1) {width:7%;}
+.d5-page table:first-of-type th:nth-child(2) {width:38%;}
+.d5-page table:first-of-type th:nth-child(3) {width:37%;}
+.d5-page table:first-of-type th:nth-child(4) {width:18%;}
+.d5-page table:nth-of-type(2) th:nth-child(1) {width:27%;}
+.d5-page table:nth-of-type(2) th:nth-child(2) {width:55%;}
+.d5-page table:nth-of-type(2) th:nth-child(3) {width:18%;}
+.d5-page .columns {gap:28px;}
+.d5-page li {margin:5px 0;}
+@media print {.d5-page{font-size:13px;}.d5-page h2{font-size:15px;}.d5-page table{font-size:12px;}}
+/* End D5 review layout */
+</style>
+</head>
+<body>
+  <section class="page d1-page"><div class="eyebrow">Healthcare referral architecture · Deliverable 1 of 5</div><h1>D1. Problem &amp; success snapshot</h1><p class="lede">Problem, people, constraints, assumptions, and measurable outcomes — based on the supplied healthcare scenario.</p><div class="columns wide-left"><div><h2>Problem statement</h2><p>Referrals span the electronic health record (EHR), portals, scheduling, diagnostic/insurance systems, partners, spreadsheets, and emails. Staff cannot consistently see progress or who acts next. The scenario reports <strong>15–20% of referrals require manual follow-up or rework</strong>. Patients face delays, repeated calls, and unclear next steps; coordinators chase missing information. The goal is clearer tracking and reliable hand-offs while preserving the EHR, care, privacy, and human oversight.</p><h2>People and current process</h2><table><thead><tr><th>People / group</th><th>Current role</th><th>Difficulty / impact</th></tr></thead><tbody>
+<tr><td>Patients</td><td>Receive care and referral-related communication.</td><td>Delays, repeated calls, unclear next steps.</td></tr>
+<tr><td>Primary-care teams</td><td>Initiate referrals and supply clinical context.</td><td>Limited visibility across hand-offs.</td></tr>
+<tr><td>Care coordinators</td><td>Track progress, obtain missing details, coordinate hand-offs.</td><td>Manual chasing across systems.</td></tr>
+<tr><td>Specialists</td><td>Receive referrals and provide specialist care.</td><td>Clinical context may be unavailable when needed.</td></tr>
+<tr><td>External partner providers</td><td>Exchange referrals and updates with the network.</td><td>Connections are expensive to change; inconsistent shared status.</td></tr>
+</tbody></table>
+<p>Current process summary: primary care initiates referral → information moves between systems → coordinators resolve gaps → specialist/partner acts → progress and outcome are shared.</p>
+<p><strong>Confirm these roles and process steps with the clinical and operational owners of the referral process.</strong> Overall ownership is unspecified.</p><h2>Key constraints</h2><ul>
+<li>Keep the EHR in Phase 1; an initial usable capability is expected in about <strong>12 weeks</strong>.</li>
+<li>Continue normal patient care and referral processing during modernization.</li>
+<li>Minimize and secure protected health information (PHI); keep actions traceable.</li>
+<li>Govern AI-assisted outputs; keep them reviewable and sufficiently explainable.</li>
+<li>Support interoperability standards and future partners; confirm available interfaces.</li>
+<li>Give patient-facing automation a safe route to a person for escalation.</li>
+</ul><h2>Open questions</h2><ul>
+<li>Which urgent exceptions require immediate escalation, and to whom?</li>
+<li>Which consent, access, retention, and audit rules apply?</li>
+<li>What information and next-step updates should patients receive?</li>
+</ul><h2>Handoff to D2</h2><ul>
+<li>Compare visibility, reliable hand-offs, easier integration changes, privacy, and continuity within the stated constraints.</li>
+<li>Carry scope, interface readiness, status meanings, measurement gaps, and governance dependencies forward as unconfirmed.</li>
+</ul></div><div><h2>Assumptions to validate</h2><ol>
+<li><strong>A manageable first referral process can be selected.</strong> Confirm scope and participants with clinical and operational owners.</li>
+<li><strong>Selected systems can exchange essential details and updates.</strong> Check interfaces, permitted data, and partner readiness.</li>
+<li><strong>Teams can agree identifiers, statuses, and responsibilities.</strong> Confirm matching and meanings while preserving clinical-record authority.</li>
+<li><strong>Records or a sample can establish starting performance.</strong> Check data quality, definitions, and reporting period.</li>
+<li><strong>Governance can define escalation and permitted AI use.</strong> Confirm review responsibilities and privacy boundaries before using AI in the running system.</li>
+</ol><h2>Success measures</h2><p>Baseline is starting performance; target is the improvement goal. Agree the referral group and reporting period. <strong>Business stakeholders must confirm measure owners, baselines, and targets.</strong> Proposed owners collect, validate, and report measures. Sources and owners are proposals; results are not yet demonstrated.</p>
+<table><thead><tr><th>Measure</th><th>Definition / method</th><th>Baseline</th><th>Target</th><th>Data source / owner</th></tr></thead><tbody>
+<tr><td>Less follow-up / rework</td><td>Referrals needing manual follow-up or rework ÷ all in-scope referrals.</td><td>Scenario: 15–20%; validate group/period.</td><td>To agree after baseline measurement.</td><td>Source (proposed): work-queue records. Owner (proposed): referral operations manager.</td></tr>
+<tr><td>Faster turnaround</td><td>Median time from agreed start to agreed scheduling or completion milestone; define events first.</td><td>Not yet measured.</td><td>To agree after baseline measurement.</td><td>Source (proposed): referral/scheduling timestamps. Owner (proposed): referral operations manager.</td></tr>
+<tr><td>Clearer status and responsibility</td><td>Sampled referrals with current status and responsible owner across agreed stages ÷ all sampled referrals.</td><td>Not yet measured.</td><td>To agree after baseline measurement.</td><td>Source (proposed): system/partner records. Owner (proposed): referral process owner.</td></tr>
+<tr><td>Fewer incomplete hand-offs</td><td>Referrals unresolved beyond an agreed stage-specific follow-up window ÷ all in-scope referrals.</td><td>Not yet measured.</td><td>To agree after baseline measurement.</td><td>Source (proposed): referral/partner outcomes. Owner (proposed): referral process owner.</td></tr>
+<tr><td>More complete action records</td><td>Sampled hand-offs recording status, time, actor/system, and required outcome ÷ all sampled hand-offs.</td><td>Not yet measured.</td><td>To agree after baseline measurement.</td><td>Source (proposed): audit records. Owner (proposed): referral operations manager, supported by audit/compliance.</td></tr>
+</tbody></table>
+<p>Rate measures are percentages. Receipt, scheduling, and clinical completion are distinct; receipt alone does not mean completed care.</p></div></div><div class="footer"><span>Scenario-based brief · Business stakeholders confirm roles, measures, and targets.</span><span>1 / 5</span></div></section>
+
+  <section class="page d2-page"><div class="eyebrow">Healthcare referral architecture · Deliverable 2 of 5</div><h1>D2. Architecture options &amp; decision</h1><h2>Decision context</h2><p>The network needs fewer referral corrections and delays, clearer status and responsibility, fewer incomplete hand-offs, and more complete action records. Keep the electronic health record (EHR), continue patient care, protect patient information, and aim for an initial usable capability in about <strong>12 weeks</strong>. D1's interfaces, process ownership, starting measurements, and targets remain unconfirmed. Compare two approaches; neither has demonstrated these improvements yet.</p><div class="columns"><div class="card"><h2>Option A — Shared referral coordination around the EHR</h2><p>Add a shared capability that tracks referral progress across systems, shows who acts next, and directs problems to care coordinators. Connect it to the EHR and selected partners through replaceable connections. Clinical records stay in the EHR; the new capability tracks coordination.</p>
+<p><strong>Potential benefit:</strong> A shared view could reduce chasing and reveal delayed or incomplete hand-offs across organizations. Separate connections could make partner changes easier.</p>
+<p><strong>Main trade-off / dependency:</strong> Another capability must be operated and protected. Teams must agree identifiers, status meanings, responsibilities, and how conflicting updates are resolved. Usable interfaces and partner participation are prerequisites.</p></div><div class="card"><h2>Option B — Improve referral coordination within the EHR</h2><p>Improve referral tracking and work queues mainly inside the existing EHR, connecting selected partners directly. Staff use the EHR as the main coordination workspace; external providers retain their own systems.</p>
+<p><strong>Potential benefit:</strong> Could improve internal referral work while keeping staff close to the clinical record and limiting additional workspaces.</p>
+<p><strong>Main trade-off / dependency:</strong> The scenario says modifying the clinical core is expensive and risky. Feasibility depends on supported configuration and interfaces; partner-specific connections may preserve existing change difficulties. Existing access and audit controls still need assessment.</p></div></div><h2>Trade-off comparison</h2><table><thead><tr><th>D1 outcome / criterion</th><th>Option A — Shared coordination</th><th>Option B — EHR-centered</th></tr></thead><tbody>
+<tr><td>Less follow-up / rework</td><td>Shared checks and coordinator tasks could expose missing details; depends on reliable updates.</td><td>EHR checks could reduce internal corrections; external chasing may remain.</td></tr>
+<tr><td>Faster turnaround / fewer incomplete hand-offs</td><td>Cross-system tracking could reveal stalled referrals; staff and partners must act on them.</td><td>EHR queues could reveal internal delays; partner progress depends on available updates.</td></tr>
+<tr><td>Clearer status and responsibility</td><td>Shared tracking could cover multiple organizations if statuses and roles are agreed.</td><td>Visibility could improve inside the EHR; external coverage depends on integrations.</td></tr>
+<tr><td>More complete action records / privacy</td><td>Could record cross-system hand-offs; adds patient-data exposure and access/audit obligations.</td><td>Could use EHR records; audit completeness, access, and external records need checking.</td></tr>
+<tr><td>Initial release / care continuity</td><td>Limit to one agreed process; test connections and safe fallback while retaining the EHR.</td><td>Limit to supported EHR changes; validate changes and rollback without disrupting care.</td></tr>
+<tr><td>Partner changes / maintainability</td><td>Replaceable connections could isolate partner changes; mapping and upkeep remain necessary.</td><td>Direct connections may require repeated EHR or partner-specific changes.</td></tr>
+<tr><td>Operating effort / growth</td><td>Adds shared tracking, support, and consistency work; capacity remains unproven.</td><td>Avoids a separate coordination workspace; depends more on EHR change cycles and capacity.</td></tr>
+</tbody></table><div class="columns"><div><h2>Preferred direction</h2><p><strong>Conditionally prefer Option A</strong> for one agreed referral process. It more directly addresses D1's cross-system visibility, missing hand-offs, and manual chasing, while retaining the EHR. It does not guarantee faster referrals or lower rework.</p>
+<p><strong>Accepted trade-offs:</strong></p>
+<ul>
+<li>Another capability to operate and support.</li>
+<li>Another patient-information boundary to protect and audit.</li>
+<li>Work to keep referral identities, statuses, and responsibilities consistent.</li>
+</ul>
+<p>Keep clinical authority with authorized staff, preserve patient-care continuity, and provide human escalation. AI is optional and requires approved data use and review.</p></div><div><h2>Decision dependencies and revisit triggers</h2><ul>
+<li><strong>Interfaces unavailable:</strong> narrow the first process or reconsider a supported EHR-centered approach.</li>
+<li><strong>Roles or statuses unresolved:</strong> defer shared coordination until clinical and operational owners agree them.</li>
+<li><strong>EHR changes demonstrably safer for this scope:</strong> reconsider Option B for Phase 1.</li>
+<li><strong>Partner, privacy, or escalation requirements unmet:</strong> defer the affected flow and agree a safe fallback.</li>
+<li><strong>12-week scope threatens care continuity:</strong> reduce scope or revise sequencing.</li>
+</ul><h2>Handoff to D3</h2><ul>
+<li>Show the retained EHR, shared tracking, coordinator tasks, partner connections, and clinical versus coordination data boundaries.</li>
+<li>Show access, audit, failure handling, and human escalation; validate actual interfaces and standards support before selecting mechanisms.</li>
+<li>Carry D1's measures and unresolved scope, ownership, privacy, and capacity questions into design validation.</li>
+</ul></div></div><div class="footer"><span>Conditional recommendation · Clinical, operational, and technical review required.</span><span>2 / 5</span></div></section>
+
+  <section class="page d3-page"><div class="eyebrow">Healthcare referral architecture · Deliverable 3 of 5</div><h1>D3. Target-state architecture</h1><p class="lede">Proposed shared coordination around the retained EHR · Select and approve one initial referral process.</p><svg class="d3-diagram" role="img" aria-label="Proposed shared referral coordination architecture"
+ viewBox="0.00 0.00 2101.00 408.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(18 390)">
+<title>Architecture</title>
+<g id="clust1" class="cluster">
+<title>cluster_People</title>
+<path fill="#f1f7fa" stroke="#a4becb" d="M20,-80C20,-80 239.27,-80 239.27,-80 245.27,-80 251.27,-86 251.27,-92 251.27,-92 251.27,-352 251.27,-352 251.27,-358 245.27,-364 239.27,-364 239.27,-364 20,-364 20,-364 14,-364 8,-358 8,-352 8,-352 8,-92 8,-92 8,-86 14,-80 20,-80"/>
+<text xml:space="preserve" text-anchor="middle" x="129.64" y="-340.2" font-family="Arial" font-size="22.00">People</text>
+</g>
+<g id="clust2" class="cluster">
+<title>cluster_New</title>
+<path fill="#f1f7fa" stroke="#a4becb" d="M411.26,-67C411.26,-67 1451.12,-67 1451.12,-67 1457.12,-67 1463.12,-73 1463.12,-79 1463.12,-79 1463.12,-199 1463.12,-199 1463.12,-205 1457.12,-211 1451.12,-211 1451.12,-211 411.26,-211 411.26,-211 405.26,-211 399.26,-205 399.26,-199 399.26,-199 399.26,-79 399.26,-79 399.26,-73 405.26,-67 411.26,-67"/>
+<text xml:space="preserve" text-anchor="middle" x="931.19" y="-187.2" font-family="Arial" font-size="22.00">Proposed shared coordination</text>
+</g>
+<g id="clust3" class="cluster">
+<title>cluster_Existing</title>
+<path fill="#f1f7fa" stroke="#a4becb" d="M1656.75,-8C1656.75,-8 2045.07,-8 2045.07,-8 2051.07,-8 2057.07,-14 2057.07,-20 2057.07,-20 2057.07,-246 2057.07,-246 2057.07,-252 2051.07,-258 2045.07,-258 2045.07,-258 1656.75,-258 1656.75,-258 1650.75,-258 1644.75,-252 1644.75,-246 1644.75,-246 1644.75,-20 1644.75,-20 1644.75,-14 1650.75,-8 1656.75,-8"/>
+<text xml:space="preserve" text-anchor="middle" x="1850.91" y="-234.2" font-family="Arial" font-size="22.00">Existing systems retained</text>
+</g>
+<!-- Care -->
+<g id="node1" class="node">
+<title>Care</title>
+<path fill="white" stroke="#50798c" stroke-width="1.5" d="M219.27,-145.8C219.27,-145.8 40,-145.8 40,-145.8 34,-145.8 28,-139.8 28,-133.8 28,-133.8 28,-112.2 28,-112.2 28,-106.2 34,-100.2 40,-100.2 40,-100.2 219.27,-100.2 219.27,-100.2 225.27,-100.2 231.27,-106.2 231.27,-112.2 231.27,-112.2 231.27,-133.8 231.27,-133.8 231.27,-139.8 225.27,-145.8 219.27,-145.8"/>
+<text xml:space="preserve" text-anchor="middle" x="129.64" y="-117" font-family="Arial" font-size="20.00" fill="#173047">Primary&#45;care teams</text>
+</g>
+<!-- Entry -->
+<g id="node4" class="node">
+<title>Entry</title>
+<path fill="white" stroke="#50798c" stroke-width="1.5" d="M557.21,-145.8C557.21,-145.8 431.26,-145.8 431.26,-145.8 425.26,-145.8 419.26,-139.8 419.26,-133.8 419.26,-133.8 419.26,-112.2 419.26,-112.2 419.26,-106.2 425.26,-100.2 431.26,-100.2 431.26,-100.2 557.21,-100.2 557.21,-100.2 563.21,-100.2 569.21,-106.2 569.21,-112.2 569.21,-112.2 569.21,-133.8 569.21,-133.8 569.21,-139.8 563.21,-145.8 557.21,-145.8"/>
+<text xml:space="preserve" text-anchor="middle" x="494.24" y="-117" font-family="Arial" font-size="20.00" fill="#173047">Referral entry</text>
+</g>
+<!-- Care&#45;&gt;Entry -->
+<g id="edge1" class="edge">
+<title>Care&#45;&gt;Entry</title>
+<path fill="none" stroke="#315b73" stroke-width="1.7" d="M231.64,-123C287.24,-123 355.46,-123 408.29,-123"/>
+<polygon fill="#315b73" stroke="#315b73" stroke-width="1.7" points="408.07,-125.8 416.07,-123 408.07,-120.2 408.07,-125.8"/>
+<text xml:space="preserve" text-anchor="middle" x="312.73" y="-127.8" font-family="Arial" font-size="16.00" fill="#315b73">Submit referral</text>
+</g>
+<!-- Staff -->
+<g id="node2" class="node">
+<title>Staff</title>
+<path fill="white" stroke="#50798c" stroke-width="1.5" d="M211.52,-227.8C211.52,-227.8 47.75,-227.8 47.75,-227.8 41.75,-227.8 35.75,-221.8 35.75,-215.8 35.75,-215.8 35.75,-194.2 35.75,-194.2 35.75,-188.2 41.75,-182.2 47.75,-182.2 47.75,-182.2 211.52,-182.2 211.52,-182.2 217.52,-182.2 223.52,-188.2 223.52,-194.2 223.52,-194.2 223.52,-215.8 223.52,-215.8 223.52,-221.8 217.52,-227.8 211.52,-227.8"/>
+<text xml:space="preserve" text-anchor="middle" x="129.64" y="-199" font-family="Arial" font-size="20.00" fill="#173047">Care coordinators</text>
+</g>
+<!-- Patient -->
+<g id="node3" class="node">
+<title>Patient</title>
+<path fill="white" stroke="#50798c" stroke-width="1.5" d="M168.17,-309.8C168.17,-309.8 91.1,-309.8 91.1,-309.8 85.1,-309.8 79.1,-303.8 79.1,-297.8 79.1,-297.8 79.1,-276.2 79.1,-276.2 79.1,-270.2 85.1,-264.2 91.1,-264.2 91.1,-264.2 168.17,-264.2 168.17,-264.2 174.17,-264.2 180.17,-270.2 180.17,-276.2 180.17,-276.2 180.17,-297.8 180.17,-297.8 180.17,-303.8 174.17,-309.8 168.17,-309.8"/>
+<text xml:space="preserve" text-anchor="middle" x="129.64" y="-281" font-family="Arial" font-size="20.00" fill="#173047">Patients</text>
+</g>
+<!-- Track -->
+<g id="node5" class="node">
+<title>Track</title>
+<path fill="white" stroke="#50798c" stroke-width="1.5" d="M1018.34,-156.8C1018.34,-156.8 778.98,-156.8 778.98,-156.8 772.98,-156.8 766.98,-150.8 766.98,-144.8 766.98,-144.8 766.98,-99.2 766.98,-99.2 766.98,-93.2 772.98,-87.2 778.98,-87.2 778.98,-87.2 1018.34,-87.2 1018.34,-87.2 1024.34,-87.2 1030.34,-93.2 1030.34,-99.2 1030.34,-99.2 1030.34,-144.8 1030.34,-144.8 1030.34,-150.8 1024.34,-156.8 1018.34,-156.8"/>
+<text xml:space="preserve" text-anchor="middle" x="898.66" y="-128" font-family="Arial" font-size="20.00" fill="#173047">Shared referral tracking</text>
+<text xml:space="preserve" text-anchor="middle" x="898.66" y="-104" font-family="Arial" font-size="20.00" fill="#173047">Status, next action, history</text>
+</g>
+<!-- Entry&#45;&gt;Track -->
+<g id="edge2" class="edge">
+<title>Entry&#45;&gt;Track</title>
+<path fill="none" stroke="#315b73" stroke-width="1.7" d="M569.52,-122.82C621.69,-122.69 693.1,-122.51 755.98,-122.35"/>
+<polygon fill="#315b73" stroke="#315b73" stroke-width="1.7" points="755.83,-125.15 763.83,-122.33 755.82,-119.55 755.83,-125.15"/>
+<text xml:space="preserve" text-anchor="middle" x="680.63" y="-127.48" font-family="Arial" font-size="16.00" fill="#315b73">Register referral</text>
+</g>
+<!-- Track&#45;&gt;Staff -->
+<g id="edge6" class="edge">
+<title>Track&#45;&gt;Staff</title>
+<path fill="none" stroke="#315b73" stroke-width="1.7" d="M756.24,-94.4C677.13,-78.97 594.28,-62.8 594.28,-62.8 594.28,-62.8 394.19,-62.8 394.19,-62.8 394.19,-62.8 260.27,-114 260.27,-114 260.27,-114 251.27,-164 251.27,-164 251.27,-164 232.47,-170.39 209.71,-178.12"/>
+<polygon fill="#315b73" stroke="#315b73" stroke-width="1.7" points="755.45,-97.1 763.83,-95.89 756.52,-91.61 755.45,-97.1"/>
+<polygon fill="#315b73" stroke="#315b73" stroke-width="1.7" points="208.87,-175.45 202.2,-180.68 210.67,-180.76 208.87,-175.45"/>
+<text xml:space="preserve" text-anchor="middle" x="494.24" y="-67.6" font-family="Arial" font-size="16.00" fill="#315b73">Problems / reviewed actions</text>
+</g>
+<!-- Track&#45;&gt;Patient -->
+<g id="edge7" class="edge">
+<title>Track&#45;&gt;Patient</title>
+<path fill="none" stroke="#315b73" stroke-width="1.7" d="M806.17,-86.47C770.49,-72.62 737.98,-60 737.98,-60 737.98,-60 594.28,-34.8 594.28,-34.8 594.28,-34.8 394.19,-34.8 394.19,-34.8 394.19,-34.8 260.27,-114 260.27,-114 260.27,-114 251.27,-246 251.27,-246 251.27,-246 220.84,-256.34 190.54,-266.64"/>
+<polygon fill="#315b73" stroke="#315b73" stroke-width="1.7" points="189.86,-263.92 183.19,-269.14 191.66,-269.22 189.86,-263.92"/>
+<text xml:space="preserve" text-anchor="middle" x="494.24" y="-39.6" font-family="Arial" font-size="16.00" fill="#315b73">Approved status / next step</text>
+</g>
+<!-- Connect -->
+<g id="node6" class="node">
+<title>Connect</title>
+<path fill="white" stroke="#50798c" stroke-width="1.5" d="M1431.12,-156.8C1431.12,-156.8 1241.77,-156.8 1241.77,-156.8 1235.77,-156.8 1229.77,-150.8 1229.77,-144.8 1229.77,-144.8 1229.77,-99.2 1229.77,-99.2 1229.77,-93.2 1235.77,-87.2 1241.77,-87.2 1241.77,-87.2 1431.12,-87.2 1431.12,-87.2 1437.12,-87.2 1443.12,-93.2 1443.12,-99.2 1443.12,-99.2 1443.12,-144.8 1443.12,-144.8 1443.12,-150.8 1437.12,-156.8 1431.12,-156.8"/>
+<text xml:space="preserve" text-anchor="middle" x="1336.45" y="-128" font-family="Arial" font-size="20.00" fill="#173047">System connections</text>
+<text xml:space="preserve" text-anchor="middle" x="1336.45" y="-104" font-family="Arial" font-size="20.00" fill="#173047">Interfaces to validate</text>
+</g>
+<!-- Track&#45;&gt;Connect -->
+<g id="edge3" class="edge">
+<title>Track&#45;&gt;Connect</title>
+<path fill="none" stroke="#315b73" stroke-width="1.7" d="M1041.51,-122C1098.88,-122 1164.29,-122 1218.82,-122"/>
+<polygon fill="#315b73" stroke="#315b73" stroke-width="1.7" points="1041.58,-119.2 1033.58,-122 1041.58,-124.8 1041.58,-119.2"/>
+<polygon fill="#315b73" stroke="#315b73" stroke-width="1.7" points="1218.65,-124.8 1226.65,-122 1218.65,-119.2 1218.65,-124.8"/>
+<text xml:space="preserve" text-anchor="middle" x="1130.06" y="-126.8" font-family="Arial" font-size="16.00" fill="#315b73">Details and updates</text>
+</g>
+<!-- EHR -->
+<g id="node7" class="node">
+<title>EHR</title>
+<path fill="white" stroke="#50798c" stroke-width="1.5" d="M1965.57,-203.8C1965.57,-203.8 1736.24,-203.8 1736.24,-203.8 1730.24,-203.8 1724.24,-197.8 1724.24,-191.8 1724.24,-191.8 1724.24,-146.2 1724.24,-146.2 1724.24,-140.2 1730.24,-134.2 1736.24,-134.2 1736.24,-134.2 1965.57,-134.2 1965.57,-134.2 1971.57,-134.2 1977.57,-140.2 1977.57,-146.2 1977.57,-146.2 1977.57,-191.8 1977.57,-191.8 1977.57,-197.8 1971.57,-203.8 1965.57,-203.8"/>
+<text xml:space="preserve" text-anchor="middle" x="1850.91" y="-175" font-family="Arial" font-size="20.00" fill="#173047">Electronic health record</text>
+<text xml:space="preserve" text-anchor="middle" x="1850.91" y="-151" font-family="Arial" font-size="20.00" fill="#173047">Clinical records stay here</text>
+</g>
+<!-- Connect&#45;&gt;EHR -->
+<g id="edge4" class="edge">
+<title>Connect&#45;&gt;EHR</title>
+<path fill="none" stroke="#315b73" stroke-width="1.7" d="M1453.79,-132.67C1530.87,-139.74 1632.3,-149.04 1713.23,-156.46"/>
+<polygon fill="#315b73" stroke="#315b73" stroke-width="1.7" points="1454.42,-129.92 1446.19,-131.97 1453.9,-135.49 1454.42,-129.92"/>
+<polygon fill="#315b73" stroke="#315b73" stroke-width="1.7" points="1712.71,-159.23 1720.93,-157.17 1713.22,-153.65 1712.71,-159.23"/>
+<text xml:space="preserve" text-anchor="middle" x="1553.94" y="-153.81" font-family="Arial" font-size="16.00" fill="#315b73">Referral details / status</text>
+</g>
+<!-- Other -->
+<g id="node8" class="node">
+<title>Other</title>
+<path fill="white" stroke="#50798c" stroke-width="1.5" d="M2025.07,-97.8C2025.07,-97.8 1676.75,-97.8 1676.75,-97.8 1670.75,-97.8 1664.75,-91.8 1664.75,-85.8 1664.75,-85.8 1664.75,-40.2 1664.75,-40.2 1664.75,-34.2 1670.75,-28.2 1676.75,-28.2 1676.75,-28.2 2025.07,-28.2 2025.07,-28.2 2031.07,-28.2 2037.07,-34.2 2037.07,-40.2 2037.07,-40.2 2037.07,-85.8 2037.07,-85.8 2037.07,-91.8 2031.07,-97.8 2025.07,-97.8"/>
+<text xml:space="preserve" text-anchor="middle" x="1850.91" y="-69" font-family="Arial" font-size="20.00" fill="#173047">Partner / supporting systems</text>
+<text xml:space="preserve" text-anchor="middle" x="1850.91" y="-45" font-family="Arial" font-size="20.00" fill="#173047">Specialist, scheduling, tests, insurance</text>
+</g>
+<!-- Connect&#45;&gt;Other -->
+<g id="edge5" class="edge">
+<title>Connect&#45;&gt;Other</title>
+<path fill="none" stroke="#315b73" stroke-width="1.7" d="M1453.85,-108.6C1512.91,-101.8 1586.26,-93.35 1653.73,-85.59"/>
+<polygon fill="#315b73" stroke="#315b73" stroke-width="1.7" points="1453.81,-105.78 1446.19,-109.48 1454.45,-111.35 1453.81,-105.78"/>
+<polygon fill="#315b73" stroke="#315b73" stroke-width="1.7" points="1653.88,-88.39 1661.51,-84.69 1653.24,-82.82 1653.88,-88.39"/>
+<text xml:space="preserve" text-anchor="middle" x="1553.94" y="-110.98" font-family="Arial" font-size="16.00" fill="#315b73">Referral details / status</text>
+</g>
+</g>
+</svg>
+<div class="d3-summary"><p>Care teams submit referrals; shared tracking exchanges updates with existing systems, directs problems to coordinators, and provides approved patient updates.</p>
+<p><strong>Across all flows:</strong> necessary data only, authorized access, traceable actions, monitoring, and safe recovery. These are proposed controls, not implemented guarantees.</p></div><div class="columns"><div><h2>Major components and responsibilities</h2><table><thead><tr><th>Component</th><th>Responsibility</th><th>Record ownership</th></tr></thead><tbody>
+<tr><td>Referral entry</td><td>Receive referrals within the selected scope.</td><td>Does not replace clinical records.</td></tr>
+<tr><td>Shared referral tracking</td><td>Show progress, who acts next, follow-up tasks, and action history.</td><td>Holds coordination data, not the official clinical record.</td></tr>
+<tr><td>System connections</td><td>Exchange permitted referral details and updates; isolate system-specific changes.</td><td>Connected systems retain their records.</td></tr>
+<tr><td>Existing EHR</td><td>Continue clinical documentation and existing care processes.</td><td>Remains authoritative for its clinical records.</td></tr>
+<tr><td>Partner / supporting systems</td><td>Continue specialist, scheduling, diagnostic, and insurance workflows.</td><td>Each retains its existing record responsibilities; confirm boundaries.</td></tr>
+</tbody></table><h2>Integration and data</h2><ul>
+<li>Exchange uses supported interfaces; standards, mappings, identity matching, and partner participation need validation. Specialist teams act through their existing systems/channels; exact channels need confirmation.</li>
+<li>Store only necessary identifiers, progress, next-action responsibility, and history. Receipt, scheduling, and completed care are separate milestones; absent updates never mean completion.</li>
+</ul><h2>Alignment to D2</h2><p>This implements D2's conditional Option A around the retained EHR. Shared tracking and follow-up tasks support D1's rework, turnaround, visibility, hand-off, and action-record measures; improvement must be measured, not assumed.</p></div><div><h2>AI and human control</h2><p>AI is optional and outside the core diagram. Any later use requires approved inputs and human review; no autonomous clinical decisions. Coordinators resolve administrative problems and escalate clinical concerns to authorized clinicians. Patients must have a route to human help.</p><h2>Security and resilience</h2><ul>
+<li>Confirm access roles, consent, retention, and protection of patient information in storage and exchange.</li>
+<li>Record attributable actions; monitor delayed referrals and failed connections using minimum necessary data.</li>
+<li>Give failures a responsible person and agreed fallback. Validate duplicate handling, safe retry, conflicting updates, and recovery before pilot; normal care must continue.</li>
+</ul><h2>Design assumptions and validation points</h2><ul>
+<li>Clinical and operational owners must select the first referral process and confirm responsibilities; approval is not yet recorded.</li>
+<li>Technical and partner teams must verify interfaces, identifiers, status meanings, and data boundaries.</li>
+<li>Privacy/security owners must confirm controls and patient communication rules.</li>
+<li>Validate expected volume, recovery needs, and feasible scope against the approximately 12-week initial capability expectation; capacity and resilience are unproven.</li>
+</ul></div></div><div class="footer"><span>Conceptual proposal · Interfaces, controls, scope, and operating responsibilities require validation.</span><span>3 / 5</span></div></section>
+
+  <section class="page d4-page"><div class="eyebrow">Healthcare referral architecture · Deliverable 4 of 5</div><h1>D4. Focused POC / validation</h1><p class="lede">Working local coordination application · Verified behavior, learning, and limits.</p><div class="columns"><div><h2>Question and hypothesis</h2><p><strong>Question:</strong> Can local coordination keep referrals visible through missing information, delayed receipts, and human-approved retry, while preserving records across refresh?</p>
+<p><strong>Hypothesis:</strong> Staff can correct incomplete entries, record external hand-offs and receipt references, see overdue follow-up from saved deadlines, and retain attributable action history in the same browser.</p><h2>Scope and safety</h2><p>The working local application covers D3's referral entry, shared tracking, and staff follow-up. Records persist in browser storage; deadlines use device time. Partner/EHR exchange and patient updates are excluded. No clinical decisions or runtime AI. Use fictional or approved non-identifying data; typed names are recorded labels, not authenticated identities.</p><h2>Prototype</h2><p>Open <a href="../../poc/referral-coordination/index.html">Referral coordination</a>; keep its four supporting files together. See the <a href="../../poc/referral-coordination/README.md">usage and practice guide</a>.</p>
+<ol>
+<li>Add a referral with missing specialty; correct it through <strong>Edit details</strong>.</li>
+<li><strong>Record hand-off</strong> with a person/reference from an external action; the application sends no messages.</li>
+<li>Set a short follow-up before a new hand-off, wait for its deadline, and approve retry with a person/reason. Record the next external hand-off separately.</li>
+<li><strong>Record receipt</strong> with partner confirmation; inspect history and refresh to verify persistence.</li>
+<li>Export if needed. Reset requires typing <code>RESET</code>; it clears local records/history and restores defaults. Export has no automatic import/restore.</li>
+</ol>
+<p>Receipt is not completed care. The default follow-up is 30 minutes, a configurable local setting pending business agreement.</p></div><div><h2>Test method</h2><p>Run <code>tests/test_coordination_workspace.cjs</code> and <code>tests/validate_coordination_browser.cjs</code> with the bundled Node runtime. Timing tests use a controlled clock; the application itself uses real time and has no time-advance control.</p>
+<table><thead><tr><th>Case</th><th>Expected behavior</th><th>Observed result</th></tr></thead><tbody>
+<tr><td>Entry and correction</td><td>Missing information blocks hand-off; corrections revalidate without duplication.</td><td>PASS</td></tr>
+<tr><td>References, deadlines, and retry</td><td>Required evidence/person; overdue follow-up; reasoned retry and late receipt.</td><td>PASS</td></tr>
+<tr><td>Persistence and conflicts</td><td>Refresh retains data; duplicate/conflicting entries preserve originals; stale writes rejected.</td><td>PASS</td></tr>
+<tr><td>Storage failures and reset</td><td>Failed writes preserve data; cancellation retains records; confirmed reset remains cleared.</td><td>PASS</td></tr>
+<tr><td>Export and presentation</td><td>Export includes records/history/settings; search/filter and mobile layout work.</td><td>PASS</td></tr>
+</tbody></table><h2>Results and learning</h2><p><strong>17 rule tests and 13 browser checks passed.</strong> Engine run: 08 Oct 2026, 10:35 AM IST; browser run: 08 Oct 2026, 10:36 AM IST. <a href="../../poc/referral-coordination/engine-validation.json">Rule evidence</a> and <a href="../../poc/referral-coordination/browser-validation.json">browser evidence</a> match the current source hashes.</p>
+<p>Results support D2's coordination concept and D1's visibility, hand-off, and action-record measures. They show local software behavior, not reduced rework, faster care, verified partner delivery, or representative-user usability.</p></div></div><div class="columns"><div><h2>Limitations and what remains unproven</h2><ul>
+<li>Browser persistence is not protected central storage or a tamper-proof audit. Cleanup/reset can remove data; export is not a tested restore.</li>
+<li>No authenticated users, enforced consent, clinical validation, real interfaces, patient matching, or patient notifications. Recorded receipt is a person's statement.</li>
+<li>No production capacity, outage recovery, business-outcome or AI-performance evidence. Device time affects deadlines; overdue status appears on reopening, without closed-app alerts.</li>
+</ul></div><div><h2>Handoff to D5</h2><p>Require real interface proof, accountable roles, appropriate storage/access/audit, recovery testing, and safe escalation before an operational pilot. Use D1 baselines and agreed targets; D2 remains conditional.</p></div></div><div class="footer"><span>Local persistence and recorded external actions · No verified partner transport or protected audit.</span><span>4 / 5</span></div></section>
+
+  <section class="page d5-page"><div class="eyebrow">Healthcare referral architecture · Deliverable 5 of 5</div><h1>D5. Delivery &amp; risk plan</h1><p class="lede">One phased plan · Five practical risks · Pilot decisions based on verified evidence.</p><h2>Now / Next / Later roadmap</h2><p><strong>Business stakeholders must confirm owners, scope, timing, baselines, and targets.</strong> The scenario's approximately <strong>12-week initial capability</strong> is a planning constraint, not a guarantee. This proposed sequence follows D2's conditional shared-coordination direction; reduce scope or revisit it if critical dependencies fail.</p>
+<table><thead><tr><th>Phase</th><th>Outcome / key work</th><th>Condition to proceed</th><th>Accountable owner</th></tr></thead><tbody>
+<tr><td>Now</td><td>Select one referral process and partners; agree roles, statuses, interfaces, privacy, and D1 measurement definitions. Review the local POC's persistence, correction, deadlines, recorded references, export, and reset.</td><td>Confirm viable exchange, safe escalation, and scope. Establish baselines and agree targets before evaluating improvement.</td><td>Proposed: referral process owner.</td></tr>
+<tr><td>Next</td><td>Build a limited connected capability around the retained electronic health record (EHR). Add authenticated access, protected storage/history, recovery, and operational monitoring; train coordinators and test a controlled pilot.</td><td>Prove interfaces, matching, recorded evidence, access controls, restoration, fallback, and care continuity. Clinical/privacy owners authorize pilot; assess D1 measures without assuming improvement.</td><td>Proposed: delivery lead.</td></tr>
+<tr><td>Later</td><td>Review pilot measures/incidents; expand partners or referral types only where justified. Consider AI assistance separately if approved.</td><td>Stable workflow, effective controls, partner readiness, and evidence support expansion; otherwise correct gaps first.</td><td>Proposed: referral process owner.</td></tr>
+</tbody></table><h2>Top five risks and mitigations</h2><p>Ordered by proposed practical priority; no measured risk scores are implied.</p>
+<table><thead><tr><th>Risk / consequence</th><th>Mitigation / early warning</th><th>Accountable owner</th></tr></thead><tbody>
+<tr><td>Unsafe or unowned hand-offs delay care.</td><td>Agree urgency, responsibility, and human escalation; test failure cases. <strong>Warning:</strong> no owner or escalation route—stop the affected flow.</td><td>Proposed: clinical pathway owner.</td></tr>
+<tr><td>Interfaces or partner readiness prevent usable coordination.</td><td>Verify minimum exchange early. <strong>Warning:</strong> required details/status cannot be exchanged—narrow scope or revisit D2.</td><td>Proposed: integration lead.</td></tr>
+<tr><td>Identity, status, or manually recorded receipt is wrong.</td><td>Validate matching and milestone meanings; check references against source evidence. <strong>Warning:</strong> conflict or unsupported confirmation—require review, not automatic completion.</td><td>Proposed: clinical informatics lead.</td></tr>
+<tr><td>Patient data or history is exposed or lost.</td><td>Require controlled access, protected storage/audit, backup and tested restoration. <strong>Warning:</strong> shared unprotected browser data or unrecoverable deletion—keep it out of operational use.</td><td>Proposed: privacy/security lead.</td></tr>
+<tr><td>Transition, staffing, or scope exceeds the delivery window.</td><td>Pilot one agreed process, train staff, retain fallback, and review dependencies. <strong>Warning:</strong> unmonitored parallel work or unresolved critical dependency—reduce scope before rollout.</td><td>Proposed: referral operations manager.</td></tr>
+</tbody></table><div class="columns"><div><h2>AI-use reflection</h2><p>AI helped draft the decision pack, simplify the diagram, build the application, and create automated checks; user review shaped wording and functionality. D4 records <strong>17 rule tests and 13 browser checks</strong>, which establish local behavior, not clinical or business approval. Clinical decisions, privacy acceptance, delivery commitments, and risk acceptance remain with accountable people; the application has no runtime AI.</p></div><div><h2>Delivery guardrails</h2><ul>
+<li>Retain the EHR and continue normal patient care during Phase 1.</li>
+<li>Keep clinical records in source systems; use only approved necessary information for coordination.</li>
+<li>Browser persistence is not protected central storage; typed names are not authenticated users, and export without import is not a tested restore.</li>
+<li>Recorded receipt is not verified delivery or completed care; retain authorized human escalation and keep AI optional.</li>
+</ul></div></div><div class="footer"><span>Proposed plan and accountable roles · Business, clinical, and privacy approval remain pending.</span><span>5 / 5</span></div></section>
+</body>
+</html>

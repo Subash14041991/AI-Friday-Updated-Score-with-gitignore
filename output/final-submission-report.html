@@ -1,0 +1,698 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Final Submission Report — D1 to D5 + Model Selection</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #173047;
+      --muted: #52677a;
+      --line: #cbd7e1;
+      --soft: #f1f6f9;
+      --accent: #087f8c;
+      --accent-dark: #075b67;
+      --pale: #e6f5f5;
+      --warn: #fff3dc;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: #dfe7ec;
+      color: var(--ink);
+      font: 14px/1.38 "Segoe UI", Arial, sans-serif;
+    }
+
+    .page {
+      width: min(100%, 420mm);
+      min-height: 297mm;
+      margin: 18px auto;
+      padding: 12mm 14mm;
+      background: #fff;
+      box-shadow: 0 3px 18px #1d33451f;
+      position: relative;
+      overflow: hidden;
+      page-break-after: always;
+      break-after: page;
+    }
+
+    .page:last-child {
+      page-break-after: auto;
+      break-after: auto;
+    }
+
+    .eyebrow {
+      color: var(--accent);
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 3px 0 8px;
+      font-size: 24px;
+      line-height: 1.12;
+      letter-spacing: -.03em;
+    }
+
+    h2 {
+      margin: 12px 0 5px;
+      color: var(--accent-dark);
+      font-size: 13px;
+      line-height: 1.2;
+    }
+
+    h3 {
+      margin: 0 0 4px;
+      font-size: 10px;
+    }
+
+    p { margin: 3px 0 6px; }
+
+    .lede {
+      color: var(--muted);
+      font-size: 11px;
+      max-width: 1100px;
+    }
+
+    .callout {
+      border-left: 3px solid var(--accent);
+      background: var(--pale);
+      border-radius: 3px;
+      padding: 7px 9px;
+      margin: 6px 0;
+    }
+
+    .callout.warn {
+      border-left-color: #c18412;
+      background: var(--warn);
+    }
+
+    .columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .columns.wide-left { grid-template-columns: 1.08fr .92fr; }
+    .columns.wide-right { grid-template-columns: .84fr 1.16fr; }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 5px;
+      padding: 8px 9px;
+      margin: 5px 0;
+      background: #fff;
+      break-inside: avoid;
+    }
+
+    ul, ol {
+      padding-left: 17px;
+      margin: 4px 0 2px;
+    }
+
+    li { margin: 2px 0; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+      margin: 5px 0;
+    }
+
+    th, td {
+      border: 1px solid var(--line);
+      padding: 4px 5px;
+      text-align: left;
+      vertical-align: top;
+      overflow-wrap: anywhere;
+    }
+
+    th {
+      background: var(--soft);
+      color: var(--accent-dark);
+      font-weight: 750;
+    }
+
+    .metric-table { font-size: 8.2px; line-height: 1.28; }
+    .metric-table th:nth-child(1) { width: 18%; }
+    .metric-table th:nth-child(2) { width: 34%; }
+    .metric-table th:nth-child(3) { width: 15%; }
+    .metric-table th:nth-child(4) { width: 14%; }
+    .metric-table th:nth-child(5) { width: 19%; }
+
+    .comparison { font-size: 8.1px; line-height: 1.26; }
+    .comparison th:first-child { width: 18%; }
+    .comparison th:nth-child(2), .comparison th:nth-child(3) { width: 41%; }
+    .roadmap-table { font-size: 7.8px; line-height: 1.22; }
+    .roadmap-table th:nth-child(1) { width: 14%; }
+    .roadmap-table th:nth-child(2) { width: 37%; }
+    .roadmap-table th:nth-child(3) { width: 35%; }
+    .roadmap-table th:nth-child(4) { width: 14%; }
+    .risk-table { font-size: 7.8px; line-height: 1.22; }
+    .risk-table th:nth-child(1) { width: 31%; }
+    .risk-table th:nth-child(2) { width: 53%; }
+    .risk-table th:nth-child(3) { width: 16%; }
+
+    .footer {
+      position: absolute;
+      left: 14mm;
+      right: 14mm;
+      bottom: 6mm;
+      display: flex;
+      justify-content: space-between;
+      border-top: 1px solid var(--line);
+      padding-top: 4px;
+      color: var(--muted);
+      font-size: 8px;
+    }
+
+    .tag {
+      display: inline-block;
+      border-radius: 99px;
+      background: var(--pale);
+      color: var(--accent-dark);
+      padding: 2px 6px;
+      font-size: 8px;
+      font-weight: 750;
+      margin: 1px 2px 1px 0;
+    }
+
+    .architecture {
+      display: block;
+      width: 100%;
+      height: 96mm;
+      border: 1px solid var(--line);
+      border-radius: 5px;
+      background: #fbfdfe;
+      margin: 6px 0;
+    }
+
+    .arch-box { fill: #fff; stroke: #547489; stroke-width: 1.5; rx: 7; }
+    .arch-boundary { fill: #f0f7fa; stroke: #7798aa; stroke-width: 1.4; rx: 12; }
+    .arch-old { fill: #f6f7f8; stroke: #74818c; stroke-width: 1.5; rx: 7; }
+    .arch-ai { fill: #fff8e9; stroke: #c38b25; stroke-width: 1.5; rx: 7; }
+    .arch-store { fill: #eaf5f7; stroke: #39838c; stroke-width: 1.5; }
+    .arch-title { font: 700 15px "Segoe UI", Arial, sans-serif; fill: #173047; }
+    .arch-text { font: 12px "Segoe UI", Arial, sans-serif; fill: #29465b; }
+    .arch-small { font: 10px "Segoe UI", Arial, sans-serif; fill: #52677a; }
+    .arch-line { stroke: #355c73; stroke-width: 1.7; fill: none; marker-end: url(#arrow); }
+    .arch-dash { stroke: #b07a19; stroke-width: 1.7; stroke-dasharray: 6 5; fill: none; marker-end: url(#arrowGold); }
+    .arch-control { stroke: #087f8c; stroke-width: 1.2; stroke-dasharray: 4 4; fill: none; }
+
+    .compact { font-size: 8.5px; line-height: 1.28; }
+    .compact p { margin: 2px 0 4px; }
+    .compact ul { margin-top: 2px; }
+    .component-table { font-size: 7.8px; line-height: 1.22; }
+    .component-table th:first-child { width: 22%; }
+    .component-table th:nth-child(2) { width: 39%; }
+    .component-table th:nth-child(3) { width: 39%; }
+
+    @media screen and (max-width: 900px) {
+      .page { min-height: 0; margin: 10px auto; padding: 24px; overflow: visible; }
+      .columns, .columns.wide-left, .columns.wide-right { grid-template-columns: 1fr; }
+      .footer { position: static; margin-top: 24px; }
+      .architecture { height: auto; min-height: 300px; }
+    }
+
+    @media print {
+      @page { size: A3 landscape; margin: 0; }
+      html, body { width: 420mm; background: #fff; }
+      body { font-size: 9px; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+      .page {
+        width: 420mm;
+        height: 297mm;
+        min-height: 297mm;
+        margin: 0;
+        padding: 11mm 13mm 13mm;
+        box-shadow: none;
+        overflow: hidden;
+      }
+      h1 { font-size: 21px; }
+      h2 { font-size: 11px; }
+      .lede { font-size: 9px; }
+      .architecture { height: 89mm; }
+      .compact { font-size: 7.5px; }
+      .component-table { font-size: 7px; }
+    }
+  </style>
+</head>
+<body>
+  <section class="page" aria-labelledby="d1-title">
+    <div class="eyebrow">Decision pack · 1 of 6</div>
+    <h1 id="d1-title">D1. Problem &amp; success snapshot</h1>
+    <p class="lede">A business-critical request/case/transaction capability has accumulated fragmented processes and integrations. The goal is incremental modernization without replacing the core in Phase 1 or interrupting normal processing.</p>
+
+    <div class="columns wide-left">
+      <div>
+        <h2>Problem</h2>
+        <p>Customers, staff, and partners rely on a capability spread across a stable core, supporting applications, tightly coupled integrations, spreadsheets, email, and manual steps. This obscures end-to-end status and ownership, weakens auditability and operational insight, and contributes to inconsistent handling: <strong>10–12% of work items need manual intervention</strong>. Modernize incrementally to reduce avoidable effort and improve visibility, changeability, and resilience.</p>
+
+        <h2>Key constraints</h2>
+        <div class="card">
+          <span class="tag">Core retained in Phase 1</span>
+          <span class="tag">Usable capability in ~12 weeks</span>
+          <span class="tag">Business processing continues</span>
+          <span class="tag">Protect and minimize sensitive data</span>
+          <span class="tag">AI outputs reviewable and governed</span>
+          <span class="tag">Support future channels and higher volumes</span>
+          <span class="tag">No big-bang replacement</span>
+        </div>
+
+        <h2>Assumptions to validate</h2>
+        <ol>
+          <li>A representative work-item lifecycle and exception categories can be agreed across affected teams.</li>
+          <li>The core can exchange the minimum information needed through at least one supported mechanism; confirm interfaces and data ownership.</li>
+          <li>Operational records or a time-boxed sample can establish manual-intervention and turnaround baselines.</li>
+          <li>Business/operations representatives can review AI outputs, with an accountable owner for approval and escalation rules.</li>
+          <li>The 12-week release can be bounded to an initial usable capability rather than all channels and processes.</li>
+        </ol>
+      </div>
+
+      <div>
+        <h2>Success measures</h2>
+        <p><strong>Targets are not specified.</strong> Agree numeric targets after confirming definitions and baselines with the business owner.</p>
+        <table class="metric-table">
+          <thead>
+            <tr><th>Measure</th><th>Definition / method</th><th>Baseline</th><th>Target</th><th>Source / owner</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Manual intervention rate</td><td>Intervened items ÷ total items for a consistent scope and period.</td><td>10–12%; validate scope and period.</td><td>TBD with business owner.</td><td>Operational records; owner TBD.</td></tr>
+            <tr><td>Status and ownership visibility</td><td>Share of in-scope items with retrievable current status and accountable owner across agreed lifecycle.</td><td>Not provided; establish baseline.</td><td>TBD with business owner.</td><td>Work-item records / operations sample; owner TBD.</td></tr>
+            <tr><td>Turnaround time</td><td>Elapsed time from agreed start to completion; select statistic and segment by work type.</td><td>Not provided; establish baseline.</td><td>TBD with business owner.</td><td>Timestamped records; owner TBD.</td></tr>
+            <tr><td>Integration change lead time</td><td>Approval to production for an in-scope channel/integration change.</td><td>Not provided; establish baseline.</td><td>TBD with business owner.</td><td>Change records; owner TBD.</td></tr>
+            <tr><td>Decision-history completeness</td><td>Sampled items with retrievable status changes, decisions, and accountable actors.</td><td>Not provided; establish baseline.</td><td>TBD with business owner.</td><td>Audit/work-item sample; owner TBD.</td></tr>
+            <tr><td>Processing continuity</td><td>Modernization proceeds within business-agreed disruption/service thresholds.</td><td>Thresholds not provided.</td><td>No unacceptable interruption; define threshold.</td><td>Service/incident records; owner TBD.</td></tr>
+          </tbody>
+        </table>
+        <div class="callout warn"><strong>Key unknowns:</strong> first-release domain and lifecycle; core interfaces; volumes and service expectations; turnaround baseline; decisions eligible for AI assistance and those requiring human approval.</div>
+      </div>
+    </div>
+    <div class="footer"><span>Source: scenario workbook and D1 snapshot</span><span>1 / 6</span></div>
+  </section>
+
+  <section class="page" aria-labelledby="d2-title">
+    <div class="eyebrow">Decision pack · 2 of 6</div>
+    <h1 id="d2-title">D2. Architecture options &amp; decision</h1>
+    <p class="lede">Decision context: retain the core, continue normal processing, protect sensitive information, and target an initial usable capability in about 12 weeks. Interfaces, lifecycle, first-release scope, data ownership, and baselines remain unconfirmed.</p>
+
+    <div class="columns">
+      <article class="card">
+        <h2>Option A · Workflow-led case orchestration</h2>
+        <p>Introduce a workflow/case orchestration capability around the existing core. It coordinates an agreed lifecycle, provides shared status and ownership, routes exceptions to a human queue, and calls existing systems through replaceable adapters. The core remains authoritative for its current records.</p>
+        <p><strong>Strength:</strong> Directly addresses fragmented hand-offs, distributed process knowledge, exception handling, and missing end-to-end ownership.</p>
+        <p><strong>Trade-offs:</strong> Requires lifecycle and data-ownership agreement, feasible interfaces, coexistence planning, and operational ownership; overlapping rules could be duplicated.</p>
+      </article>
+      <article class="card">
+        <h2>Option B · API/event backbone; retain existing workflows</h2>
+        <p>Introduce shared APIs/adapters and supported notifications between channels, existing applications, and the core. Existing systems keep their workflows; a consolidated status/read view and operational history are assembled from their records and interfaces.</p>
+        <p><strong>Strength:</strong> Decouples integrations and limits early changes to process behavior, supporting new channels without core replacement.</p>
+        <p><strong>Trade-offs:</strong> Workflow ownership and rules remain distributed. A consistent view depends on reliable identifiers, status data, and interfaces; integration and reconciliation operations are added.</p>
+      </article>
+    </div>
+
+    <h2>Trade-off comparison</h2>
+    <table class="comparison">
+      <thead><tr><th>Criterion</th><th>Option A · workflow orchestration</th><th>Option B · integration backbone</th></tr></thead>
+      <tbody>
+        <tr><td>Phase 1 / usability</td><td>Can target one lifecycle and thin integration slice; depends on interfaces and agreement speed.</td><td>Can start with bounded integration/status view; depends on source interfaces and consistent identifiers/status.</td></tr>
+        <tr><td>Continuity / core impact</td><td>Core retained; careful coexistence and incremental routing required.</td><td>Core and current workflows retained; changes integration/reporting boundaries first.</td></tr>
+        <tr><td>End-to-end visibility</td><td>Stronger fit: explicit workflow state and ownership for the in-scope lifecycle.</td><td>Partial fit: consolidated view possible, but process ownership remains distributed.</td></tr>
+        <tr><td>Integration changeability</td><td>Adapters isolate system interfaces; adds orchestration integration point.</td><td>Strong decoupling fit; exact benefit depends on interface patterns.</td></tr>
+        <tr><td>Audit / insight</td><td>Can capture workflow transitions and human decisions; source ownership must be explicit.</td><td>Can capture integration/status history; decision completeness depends on source workflows.</td></tr>
+        <tr><td>Delivery / operations</td><td>New workflow ownership, support, and coexistence; scope control is critical.</td><td>Integration and reconciliation operations; distributed process rules remain.</td></tr>
+        <tr><td>Future scale/channels</td><td>Channels enter via orchestration; capacity and resilience need validation.</td><td>Channels use shared APIs/adapters; event and source throughput need validation.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="columns wide-left">
+      <div>
+        <h2>Preferred direction · conditional</h2>
+        <div class="callout"><strong>Recommend Option A</strong> for a narrowly scoped initial lifecycle, subject to validating interfaces and business ownership. It more directly addresses status/ownership gaps, distributed process knowledge, and manual exceptions.</div>
+        <p><strong>Accepted trade-offs:</strong> added workflow capability, explicit process/data ownership, possible rule overlap, and coexistence work.</p>
+        <ul>
+          <li>Keep the existing core authoritative for its established records.</li>
+          <li>Use replaceable adapters; do not assume a particular interface.</li>
+          <li>Keep consequential decisions with authorized staff; AI recommendations remain optional, reviewed, and governed.</li>
+        </ul>
+      </div>
+      <div>
+        <h2>Revisit if evidence changes the decision</h2>
+        <ul>
+          <li>Core/application interfaces cannot support safe, timely interaction: narrow scope or start with integration/status foundations.</li>
+          <li>No common lifecycle or process owner can be agreed: defer central orchestration.</li>
+          <li>Workflow rollout threatens the 12-week target or continuity: reduce scope or phase differently.</li>
+          <li>Reliable identifiers/status/history are unavailable: address reconciliation before promising full visibility/audit.</li>
+          <li>AI governance or review capacity is unconfirmed: omit runtime AI; architecture can proceed without it.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer"><span>Decision is a recommendation for human approval, not a confirmed implementation commitment.</span><span>2 / 6</span></div>
+  </section>
+
+  <section class="page" aria-labelledby="d3-title">
+    <div class="eyebrow">Decision pack · 3 of 6</div>
+    <h1 id="d3-title">D3. Target-state architecture</h1>
+    <p class="lede">Workflow-led orchestration around the existing core; incremental rollout for one agreed lifecycle. Interface mechanisms, topology, and products remain to be validated.</p>
+
+    <svg class="architecture" viewBox="0 0 1400 430" role="img" aria-labelledby="diagram-title diagram-desc">
+      <title id="diagram-title">Target-state architecture for incremental case orchestration</title>
+      <desc id="diagram-desc">People and channels connect to workflow orchestration, which uses replaceable adapters to interact with the retained core and supporting applications. Workflow state and operational history feed monitoring. Exceptions go to a human queue. Optional AI returns recommendations for human review. Security controls apply across the design.</desc>
+      <defs>
+        <marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+          <path d="M0,0 L9,4.5 L0,9 z" fill="#355c73"></path>
+        </marker>
+        <marker id="arrowGold" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+          <path d="M0,0 L9,4.5 L0,9 z" fill="#b07a19"></path>
+        </marker>
+      </defs>
+
+      <rect class="arch-boundary" x="18" y="38" width="250" height="320"></rect>
+      <text class="arch-title" x="34" y="65">People &amp; channels</text>
+      <rect class="arch-box" x="42" y="88" width="200" height="54"></rect>
+      <text class="arch-text" x="142" y="111" text-anchor="middle">Customers · staff · partners</text>
+      <text class="arch-small" x="142" y="128" text-anchor="middle">current and future channels</text>
+      <rect class="arch-box" x="55" y="264" width="174" height="56"></rect>
+      <text class="arch-text" x="142" y="287" text-anchor="middle">Human work queue</text>
+      <text class="arch-small" x="142" y="304" text-anchor="middle">review · resolve · approve</text>
+
+      <rect class="arch-boundary" x="305" y="38" width="630" height="320"></rect>
+      <text class="arch-title" x="323" y="65">Incremental modernization boundary · initial lifecycle</text>
+      <rect class="arch-box" x="335" y="105" width="165" height="60"></rect>
+      <text class="arch-text" x="417" y="129" text-anchor="middle">Channel / access</text>
+      <text class="arch-small" x="417" y="147" text-anchor="middle">mechanism to validate</text>
+      <rect class="arch-box" x="555" y="92" width="205" height="86"></rect>
+      <text class="arch-text" x="657" y="119" text-anchor="middle">Case / workflow</text>
+      <text class="arch-text" x="657" y="137" text-anchor="middle">orchestration</text>
+      <text class="arch-small" x="657" y="157" text-anchor="middle">lifecycle · status · ownership</text>
+      <rect class="arch-box" x="800" y="105" width="112" height="60"></rect>
+      <text class="arch-text" x="856" y="128" text-anchor="middle">Replaceable</text>
+      <text class="arch-text" x="856" y="145" text-anchor="middle">adapters</text>
+      <polygon class="arch-store" points="590,236 700,236 718,275 700,314 590,314 572,275"></polygon>
+      <text class="arch-text" x="645" y="269" text-anchor="middle">Orchestration state</text>
+      <text class="arch-small" x="645" y="289" text-anchor="middle">&amp; operational history</text>
+      <rect class="arch-box" x="770" y="247" width="142" height="58"></rect>
+      <text class="arch-text" x="841" y="270" text-anchor="middle">Monitoring</text>
+      <text class="arch-small" x="841" y="289" text-anchor="middle">&amp; reporting</text>
+
+      <rect class="arch-boundary" x="970" y="38" width="246" height="320"></rect>
+      <text class="arch-title" x="987" y="65">Existing systems</text>
+      <text class="arch-small" x="987" y="82">retained in Phase 1</text>
+      <rect class="arch-old" x="996" y="108" width="194" height="68"></rect>
+      <text class="arch-text" x="1093" y="134" text-anchor="middle">Stable core platform</text>
+      <text class="arch-small" x="1093" y="154" text-anchor="middle">authoritative core records</text>
+      <rect class="arch-old" x="996" y="197" width="194" height="62"></rect>
+      <text class="arch-text" x="1093" y="221" text-anchor="middle">Supporting applications</text>
+      <text class="arch-small" x="1093" y="240" text-anchor="middle">records owned per system</text>
+      <rect class="arch-old" x="996" y="280" width="194" height="48"></rect>
+      <text class="arch-small" x="1093" y="300" text-anchor="middle">Current processing continues</text>
+      <text class="arch-small" x="1093" y="315" text-anchor="middle">during phased rollout</text>
+
+      <rect class="arch-ai" x="1245" y="105" width="140" height="68"></rect>
+      <text class="arch-text" x="1315" y="129" text-anchor="middle">Optional governed</text>
+      <text class="arch-text" x="1315" y="147" text-anchor="middle">AI recommendation</text>
+      <text class="arch-small" x="1315" y="163" text-anchor="middle">classification / routing</text>
+      <text class="arch-small" x="1248" y="199">No autonomous action</text>
+
+      <path class="arch-line" d="M242 115 H335"></path>
+      <path class="arch-line" d="M500 135 H555"></path>
+      <path class="arch-line" d="M760 135 H800"></path>
+      <path class="arch-line" d="M912 135 H996"></path>
+      <path class="arch-line" d="M912 151 C945 151 955 228 996 228"></path>
+      <path class="arch-line" d="M657 178 V232"></path>
+      <path class="arch-line" d="M718 275 H770"></path>
+      <path class="arch-line" d="M555 153 C470 198 333 242 229 283"></path>
+      <path class="arch-line" d="M229 298 C360 342 495 332 594 177"></path>
+      <path class="arch-dash" d="M760 107 C925 30 1120 46 1245 120"></path>
+      <path class="arch-dash" d="M1245 159 C1120 210 1004 213 229 286"></path>
+
+      <rect x="35" y="378" width="1340" height="34" fill="#e6f5f5" stroke="#8db9bd" rx="5"></rect>
+      <text class="arch-small" x="52" y="399">Cross-cutting controls: identity &amp; least privilege · sensitive-data minimization · protection · audit · monitoring</text>
+      <text class="arch-small" x="1000" y="399">Solid = normal flow · dashed = optional AI</text>
+    </svg>
+
+    <div class="columns wide-right compact">
+      <div>
+        <h2>Components &amp; data ownership</h2>
+        <table class="component-table">
+          <thead><tr><th>Component</th><th>Responsibility</th><th>Ownership note</th></tr></thead>
+          <tbody>
+            <tr><td>Orchestration</td><td>Coordinate lifecycle, status, ownership, exception routing.</td><td>Owns process state, not core business records.</td></tr>
+            <tr><td>Adapters</td><td>Isolate system interfaces and translate supported interactions.</td><td>Do not own source records; contracts TBD.</td></tr>
+            <tr><td>Core / supporting apps</td><td>Continue established processing and business functions.</td><td>Remain authoritative for records each owns.</td></tr>
+            <tr><td>Queue / operations</td><td>Human exception review; health and agreed measures.</td><td>Accountable operational owners TBD.</td></tr>
+            <tr><td>History / optional AI</td><td>Record transitions/review outcomes; optional classification/routing recommendation.</td><td>History is separate from source records; AI is not a source of truth.</td></tr>
+          </tbody>
+        </table>
+        <h2>Integration &amp; data</h2>
+        <ul>
+          <li>Use supported source interfaces; do not assume protocols or event support.</li>
+          <li>Keep authoritative records separate from orchestration state and operational telemetry/history.</li>
+          <li>Validate identifiers, status mapping, duplicates, audit/retention, and reconciliation.</li>
+        </ul>
+      </div>
+      <div>
+        <h2>AI &amp; human control</h2>
+        <ul>
+          <li>Runtime AI is optional, not a Phase 1 dependency. If approved, suggest classification/routing only.</li>
+          <li>Use minimized permitted inputs and an approved service. Authorized staff review recommendations and own consequential decisions, overrides, and final actions.</li>
+          <li>Define uncertainty handling, escalation, review capacity, and monitoring. Omit runtime AI if governance/data permission is unconfirmed.</li>
+        </ul>
+        <h2>Security &amp; resilience</h2>
+        <ul>
+          <li>Identity-based least privilege; protect data in transit/at rest; apply minimization, retention, and deletion rules.</li>
+          <li>Attribute workflow actions and human decisions; protect audit history.</li>
+          <li>Define timeouts, retries/idempotency, error visibility, and reconciliation against real interfaces.</li>
+          <li>Monitor failed/aged work and integration health; agree availability, recovery, and capacity objectives.</li>
+          <li>Roll out incrementally with tested coexistence and rollback so normal processing continues.</li>
+        </ul>
+        <h2>Validate before committing design details</h2>
+        <p>Core/application interfaces and owners; lifecycle and record boundaries; initial scope and coexistence; volumes/service/recovery expectations; audit/security/AI policy and human-review ownership. Products, infrastructure, protocols, persistence, and topology remain unspecified.</p>
+        <div class="callout"><strong>Alignment to D2:</strong> Implements conditional workflow-led orchestration with replaceable adapters around the retained core, one initial lifecycle, explicit record ownership, human exception review, and optional governed AI.</div>
+      </div>
+    </div>
+    <div class="footer"><span>Conceptual capability view; validate mechanisms and implementation details.</span><span>3 / 6</span></div>
+  </section>
+
+  <section class="page" aria-labelledby="d4-title">
+    <div class="eyebrow">Decision pack · 4 of 6</div>
+    <h1 id="d4-title">D4. Focused POC / validation</h1>
+    <p class="lede">A browser-only exception triage mock-up tests whether a workflow-style queue can make routing suggestions reviewable and record human decisions without connecting to the core.</p>
+
+    <div class="columns wide-left">
+      <div>
+        <h2>Question &amp; hypothesis</h2>
+        <div class="callout"><strong>Question:</strong> Can a compact triage queue make synthetic exception work visible, offer an explainable route, and capture human acceptance or override without changing or connecting to the core?</div>
+        <p><strong>Hypothesis:</strong> Explicit exception reasons, suggested routes, human controls, and decision history make the orchestration and human-control flow understandable.</p>
+
+        <h2>Scope &amp; safety</h2>
+        <ul>
+          <li>Five fictional synthetic records with transparent keyword rules that simulate suggestions.</li>
+          <li><strong>No AI model, external service, paid call, network request, personal/production data, credentials, or live enterprise system.</strong></li>
+          <li>Human acceptance or override is required; no business transaction is performed.</li>
+          <li>Decision history is browser-session-only and resets on refresh.</li>
+        </ul>
+
+        <h2>Run the prototype</h2>
+        <div class="card">
+          <p><strong>Artifact:</strong> <code>poc/exception-triage/index.html</code></p>
+          <p>Open the file in a modern browser. Accept one suggestion; for another case choose a different route and apply the override. Review the counters and Decision history. No server, install, or dependency is required.</p>
+        </div>
+
+        <h2>What the test demonstrated</h2>
+        <ul>
+          <li>Five synthetic exceptions render with route explanations, including a general-operations fallback.</li>
+          <li>Accept and override actions update the final route and queue counters.</li>
+          <li>Decision history records case ID, action, route, and browser-local time.</li>
+          <li>A reviewed item cannot be submitted again through the queue controls; refresh resets state.</li>
+        </ul>
+      </div>
+
+      <div>
+        <h2>Repeatable test &amp; success criteria</h2>
+        <ol>
+          <li>Open the file; confirm five synthetic cases await review.</li>
+          <li>Accept a suggestion; confirm reviewed/pending counts and one history entry.</li>
+          <li>Override a different case; confirm override count and action are recorded.</li>
+          <li>Try to review the first case again; confirm no duplicate decision entry.</li>
+          <li>Refresh; confirm the initial state returns and decisions do not persist.</li>
+        </ol>
+        <p><strong>Success:</strong> simulation is labeled; human actions change visible workflow state; decisions appear in session history; no production system or external AI service is invoked.</p>
+
+        <h2>Learning</h2>
+        <div class="callout">The human review/override interaction and visible decision capture can be demonstrated without a core integration. This supports the workflow concept, not AI capability or production readiness.</div>
+        <p>The D2 direction remains conditional on interface, lifecycle, and data-ownership discovery. The prototype itself does not change that condition.</p>
+
+        <h2>Limitations · not proven</h2>
+        <ul>
+          <li>Keyword simulation only: no model accuracy or recommendation quality was evaluated.</li>
+          <li>Synthetic cases do not establish real exception patterns, volumes, or operational behavior.</li>
+          <li>No authentication, authorization, durable/audit-grade storage, integration, retry, privacy control, or production monitoring.</li>
+          <li>No core/application interface, end-to-end workflow, scale, or security behavior was tested.</li>
+          <li>Business validation remains needed for lifecycle, exception types, owners, retention, security, service expectations, and contracts.</li>
+        </ul>
+        <h2>Handoff to D5</h2>
+        <p>Prioritize lifecycle and interface discovery. Treat model quality, durable audit, production integration, security, and scale as unproven; retain human review and override.</p>
+      </div>
+    </div>
+    <div class="footer"><span>POC evidence: human-reviewed interaction only; simulated routing rules, no AI model.</span><span>4 / 6</span></div>
+  </section>
+
+  <section class="page" aria-labelledby="d5-title">
+    <div class="eyebrow">Decision pack · 5 of 6</div>
+    <h1 id="d5-title">D5. Delivery &amp; risk plan</h1>
+    <p class="lede">Sequence the conditional workflow-led direction through evidence and decision gates. The about-12-week usable-capability expectation is a planning constraint, not a delivery guarantee.</p>
+
+    <h2>Now / Next / Later roadmap</h2>
+    <table class="roadmap-table">
+      <thead><tr><th>Phase</th><th>Outcome and key work</th><th>Dependencies / exit gate</th><th>Owner</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Now · confirm and de-risk</strong></td>
+          <td>Agree lifecycle, exception types, process owner, status vocabulary, record boundaries, and review responsibilities. Inventory interfaces/data; establish baselines and targets; define security, audit, privacy, and continuity requirements. Validate the mock-up with representative users.</td>
+          <td>Business/operations approve bounded scope; platform owners confirm a viable supported interface; security/data owners approve handling. Otherwise revisit scope or start with integration/status foundations.</td>
+          <td>Business/process, platform, operations, security/data owners; names TBD.</td>
+        </tr>
+        <tr>
+          <td><strong>Next · initial usable capability</strong></td>
+          <td>Build a thin workflow for the approved lifecycle: orchestration state, human queue, replaceable adapter(s), and status/history. Test coexistence, failure handling, access, audit, monitoring, and rollback; pilot while normal processing continues.</td>
+          <td>Meet agreed outcomes; pass security/operational review; demonstrate continuity; obtain approval to expand. Agree scope and delivery plan against the approximately 12-week expectation before committing.</td>
+          <td>Delivery, architecture, engineering, operations, business owner; names TBD.</td>
+        </tr>
+        <tr>
+          <td><strong>Later · evidence-led expansion</strong></td>
+          <td>Use pilot measures/feedback to expand exception handling and integrations; add channels/lifecycle stages incrementally; address reconciliation and capacity. Consider AI only if permitted data, governance, value, monitoring, and review capacity are established.</td>
+          <td>Expand only when prior scope is stable, measures understood, controls effective, and capacity/security validated. Reassess if interface or ownership assumptions fail.</td>
+          <td>Product/business, platform, operations, security/data governance; names TBD.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Top five risks and mitigations</h2>
+    <table class="risk-table">
+      <thead><tr><th>Rank / risk and consequence</th><th>Mitigation / early trigger</th><th>Owner</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>1. Interfaces unsuitable or unavailable.</strong> Work/status exchange may block the initial capability.</td>
+          <td>Inventory and test supported interfaces early; prove one thin, non-disruptive interaction. <strong>Trigger:</strong> required identifiers/status cannot be read or safely updated.</td>
+          <td>Core/platform owner and integration lead; TBD.</td>
+        </tr>
+        <tr>
+          <td><strong>2. Scope/coexistence threatens timing or continuity.</strong> Broad rollout may delay usable scope or interrupt processing.</td>
+          <td>Bound lifecycle/channels, preserve current paths, rehearse rollback, and require continuity gate. <strong>Trigger:</strong> plan requires core replacement, broad migration, or stopping processing.</td>
+          <td>Business owner and delivery lead; TBD.</td>
+        </tr>
+        <tr>
+          <td><strong>3. Fragmented ownership/identifiers/status.</strong> Users may see conflicting status and incomplete audit measures.</td>
+          <td>Agree record boundaries, identifiers, mappings, and reconciliation; profile sample data. <strong>Trigger:</strong> sources disagree or cannot provide accountable status/history.</td>
+          <td>Process/data owners; TBD.</td>
+        </tr>
+        <tr>
+          <td><strong>4. Security, privacy, or audit controls inadequate.</strong> Sensitive data exposure or missing history may make the capability unacceptable.</td>
+          <td>Complete reviews before pilot; minimize copied data, enforce least privilege, define retention, test attributable logs. <strong>Trigger:</strong> unapproved flow, unclear retention, or missing actor/action evidence.</td>
+          <td>Security, privacy/data governance, audit owners; TBD.</td>
+        </tr>
+        <tr>
+          <td><strong>5. AI treated as a reliable decision without evidence/review.</strong> Wrong routing, sensitive-data misuse, or unreviewed actions can undermine trust.</td>
+          <td>Runtime AI off by default; separately evaluate approved model/data; require human review, override, escalation, monitoring, and audit. <strong>Trigger:</strong> unapproved data use, insufficient review capacity, or unmeasured uncertainty.</td>
+          <td>AI/data governance and operations owner; TBD.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="columns">
+      <div>
+        <h2>AI-use reflection</h2>
+        <p>AI helped structure the problem, generate and challenge options, shape the architecture narrative/view, and scaffold the POC interaction. The team must verify facts, interface feasibility, lifecycle/data ownership, security requirements, and targets. The POC used deterministic keyword rules—not a model—so it does not validate AI quality or production readiness. Architecture choice, risk acceptance, AI-runtime approval, and delivery commitments remain human decisions.</p>
+      </div>
+      <div>
+        <h2>Delivery guardrails</h2>
+        <ul>
+          <li>Retain the core in Phase 1 and continue normal processing.</li>
+          <li>Keep scope incremental; validate feasibility against the 12-week expectation without promising it.</li>
+          <li>Protect/minimize sensitive data; use only approved data and services.</li>
+          <li>Keep consequential decisions human-owned; AI optional and governed.</li>
+          <li>Keep source records distinct from orchestration state/history.</li>
+          <li>Do not overstate what the D4 mock-up proves.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer"><span>Relative phases; named owners, dates, and delivery commitments remain to be agreed.</span><span>5 / 6</span></div>
+  </section>
+
+  <section class="page" aria-labelledby="models-title">
+    <div class="eyebrow">Decision pack · 6 of 6</div>
+    <h1 id="models-title">Model selection by agent</h1>
+    <p class="lede">Recommended allocation from the model names listed in Appendix A1. Match models to the work each agent performs, rather than using the most capable model for every step.</p>
+
+    <div class="callout warn">
+      <strong>Configuration status:</strong> These are recommendations, not confirmed gateway model IDs or configured selections. The <code>.env</code> model fields are currently blank. Before running, confirm exact IDs and availability with the gateway owner, then set <code>AVAILABLE_MODELS</code> and each <code>ARCH_AGENT_N_MODEL</code>.
+    </div>
+
+    <table>
+      <thead>
+        <tr><th>Agent / deliverable</th><th>Recommended model</th><th>Why this fit</th><th>Cost / usage note</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>D1 · Problem &amp; success</strong></td>
+          <td>GPT-4.1 Mini</td>
+          <td>Structured extraction, clear summarization, and careful separation of facts, assumptions, and unknowns are the main needs. A capable general model is appropriate without spending a premium reasoning budget on a bounded framing task.</td>
+          <td>Use as a lower-cost drafting choice; verify rates at the gateway.</td>
+        </tr>
+        <tr>
+          <td><strong>D2 · Options &amp; decision</strong></td>
+          <td>GPT-5.4 Mini</td>
+          <td>Comparing materially different options, balancing constraints, identifying accepted trade-offs, and stating decision triggers benefit from stronger reasoning while remaining more economical than defaulting to the largest model.</td>
+          <td>Reserve stronger reasoning for this high-weight decision step.</td>
+        </tr>
+        <tr>
+          <td><strong>D3 · Target-state architecture</strong></td>
+          <td>GPT-5.4 Mini</td>
+          <td>Must preserve D2 boundaries, keep source-of-truth distinctions clear, cover security/resilience and human control, and produce a coherent diagram. Reasoning capability helps maintain cross-section consistency.</td>
+          <td>Reuse the reasoning tier; review diagram and assumptions with an architect.</td>
+        </tr>
+        <tr>
+          <td><strong>D4 · Focused POC</strong></td>
+          <td>GPT-5.3 Codex</td>
+          <td>Code generation and modification are its listed strengths, which suits producing a small runnable prototype and testable interaction. Keep the POC narrow, synthetic-data-only, reviewed, and non-production.</td>
+          <td>Use only if the gateway supports this exact coding model ID; inspect generated code before running.</td>
+        </tr>
+        <tr>
+          <td><strong>D5 · Delivery &amp; risk</strong></td>
+          <td>GPT-5.4 Mini</td>
+          <td>Sequencing dependencies, carrying POC limitations into the roadmap, and identifying mitigations and decision gates benefit from reasoning; do not invent estimates or named owners.</td>
+          <td>Keep output concise and record usage from the gateway.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="columns">
+      <div>
+        <h2>Suggested configuration</h2>
+        <pre>ARCH_AGENT_1_MODEL=GPT-4.1 Mini
+ARCH_AGENT_2_MODEL=GPT-5.4 Mini
+ARCH_AGENT_3_MODEL=GPT-5.4 Mini
+ARCH_AGENT_4_MODEL=GPT-5.3 Codex
+ARCH_AGENT_5_MODEL=GPT-5.4 Mini</pre>
+        <p>Use these values only if the gateway confirms the exact IDs. Otherwise substitute the gateway's exact IDs while keeping the task-to-capability mapping.</p>
+      </div>
+      <div>
+        <h2>Cost and governance controls</h2>
+        <ul>
+          <li>The scenario workbook does not provide model prices, token rates, or gateway billing behavior; this selection cannot by itself guarantee the <strong>$24 ceiling</strong>.</li>
+          <li>Set a hard gateway budget/limit before the run. Keep the five calls sequential, review outputs at agent boundaries, and monitor reported token usage.</li>
+          <li>D4 can use a coding model for a deterministic mock-up without an AI runtime. Do not send sensitive or personal data unless the service and data use are explicitly approved.</li>
+          <li>For a no-code D4 experiment, a cost-effective general model may replace the coding model. If a selected model is unavailable, stop and choose an approved supported model rather than silently falling back.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer"><span>Model fit is a recommendation based on Appendix A1 classifications; verify exact gateway IDs and pricing.</span><span>6 / 6</span></div>
+  </section>
+</body>
+</html>

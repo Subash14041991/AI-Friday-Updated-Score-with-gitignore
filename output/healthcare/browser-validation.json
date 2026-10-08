@@ -1,0 +1,22 @@
+{
+  "executedAt": "2026-10-08T04:16:20.274Z",
+  "result": "PASS",
+  "passed": 10,
+  "checks": [
+    "Five fictional referrals; three incomplete states visible",
+    "Incomplete referral has no send action",
+    "Send and receipt states; receipt remains distinct from completion",
+    "Simulated timeout visibly assigns coordinator follow-up",
+    "Blank reviewer or reason rejected without changing status",
+    "Approved retry retains the referral and records second attempt",
+    "Replay retains five records and logs duplicate",
+    "Action history includes reviewer and reason",
+    "Reset clears records and history",
+    "Mobile layout has no horizontal overflow; no browser script errors"
+  ],
+  "artifactSha256": {
+    "poc-referral-validation.html": "88f6d1f724d5d751460035c12b4d452e9a4ac8711ff983b7f9b9031737df88fe",
+    "referral-workflow.js": "c566c2259f42dba272b6704905a854fb22e9758eb0c3deceb371532f7498fca2"
+  },
+  "limits": "Scripted synthetic browser behavior only; no representative-user usability, authentication, clinical, real-interface, or production validation."
+}

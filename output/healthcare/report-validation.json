@@ -1,0 +1,47 @@
+{
+  "executedAt": "2026-10-08T05:29:58.437Z",
+  "result": "PASS",
+  "checks": [
+    "Five report sections",
+    "Current D4 artifact/evidence links exist",
+    "All five print layouts fit without overflow",
+    "No browser script errors"
+  ],
+  "layouts": [
+    {
+      "page": 1,
+      "height": 1123,
+      "contentHeight": 1123,
+      "width": 1587,
+      "contentWidth": 1587
+    },
+    {
+      "page": 2,
+      "height": 1123,
+      "contentHeight": 1123,
+      "width": 1587,
+      "contentWidth": 1587
+    },
+    {
+      "page": 3,
+      "height": 1123,
+      "contentHeight": 1123,
+      "width": 1587,
+      "contentWidth": 1587
+    },
+    {
+      "page": 4,
+      "height": 1123,
+      "contentHeight": 1123,
+      "width": 1587,
+      "contentWidth": 1587
+    },
+    {
+      "page": 5,
+      "height": 1123,
+      "contentHeight": 1123,
+      "width": 1587,
+      "contentWidth": 1587
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "executedAt": "2026-10-08T05:06:07.363Z",
+  "passed": 13,
+  "checks": [
+    "Empty workspace; no examples loaded automatically",
+    "Incomplete record saved and hand-off blocked",
+    "Correction revalidates record without creating a duplicate",
+    "Recorded external hand-off requires reference and deliberate actor",
+    "Records and action history survive refresh",
+    "Deadline produces visible overdue state using wall-clock time (controlled test clock)",
+    "Approved retry, second hand-off, receipt reference and post-hand-off edit restriction",
+    "Optional examples retain user record and never duplicate on reload",
+    "Search and status filters",
+    "Mobile layout without horizontal overflow; no browser errors",
+    "Reset cancellation and incorrect confirmation preserve records",
+    "Export from reset dialog contains current records, history and settings",
+    "Confirmed reset restores defaults, persists empty after refresh, and permits new entries"
+  ],
+  "artifactSha256": {
+    "index.html": "bbb73207fe5ecf0db13862ef622fe0479275d503e81fb861a51dc8ef06951231",
+    "styles.css": "d4dc6407ffd666a64908a939d3f00ee67e861a4dd3ea59b6bac35911b9c1342d",
+    "config.js": "a1abbfbc279de327fdf8fa7f5b4ad7474fb31f8a020b19789217058c6beacd55",
+    "workflow.js": "e3eb82224b1dbc3f306319be016f7124c6f7346f4f8a2477b17f8f0a59f2e669",
+    "app.js": "fbb5700dc4d795368a4c7fd71c16477d4b61788ace14541fa8877c261c201096"
+  },
+  "scope": "Local browser workflow with a controlled test clock. No network integration, authenticated identity, clinical validation, or production audit."
+}

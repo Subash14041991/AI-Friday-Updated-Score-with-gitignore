@@ -1,0 +1,251 @@
+Key constraints are the conditions the solution must work within. They limit what the team can change and define what it must protect.
+1. Keep the existing EHR; deliver an initial capability in about 12 weeks.
+   The electronic health record system stays in place during Phase 1. The team must choose a manageable first release rather than attempt the whole modernization at once.
+2. Continue normal patient care and referral processing.
+   Doctors, staff and patients must be able to continue their work while the new capability is introduced. Changes cannot depend on stopping the existing process.
+3. Minimize and secure patient information; keep actions traceable.
+   Use only the protected health information (PHI) needed for the task. Protect it and record important actions so authorized reviewers can see what happened, when and who did it.
+4. Govern and review AI-assisted outputs.
+   If AI is used, its outputs need appropriate controls and human review. Responsible staff must understand enough about a suggestion to judge whether it is suitable. This does not require AI to be part of the running system.
+5. Support interoperability standards and future partners.
+   The solution should make information exchange between systems easier and support additional providers later. The team must first check what connections the existing EHR and partner systems actually support.
+6. Provide a safe route to a person.
+   If patient-facing automation cannot resolve an issue—or the issue needs human attention—the patient must have a clear way to reach responsible staff.
+These are requirements from the scenario. Unlike assumptions, they are conditions the proposed solution must respect.
+
+“Assumptions to validate” means things we believe may be possible, but must confirm before relying on them. Unlike constraints, they are not established facts.
+1. A manageable first referral process can be selected.
+   We assume the business can choose a limited starting scope—for example, one referral type with selected teams and partners. Clinical and operational owners must confirm what is included.
+2. Selected systems can exchange essential referral details and updates.
+   We assume the existing systems can share the information needed. IT teams and partner providers must check their interfaces, available data and permissions.
+3. Teams can agree identifiers, statuses and responsibilities.
+   Everyone needs a consistent way to identify a referral, understand statuses such as “received” or “scheduled,” and know who acts next. Business and IT representatives must confirm those definitions. Clinical records remain under their existing authority.
+4. Records or a sample can establish starting performance.
+   We assume there is enough reliable information to measure today’s rework, delays and visibility. Operations and reporting teams must check the data. Without a starting measurement, improvement is difficult to demonstrate.
+5. Governance can define escalation and permitted AI use.
+   We assume the responsible clinical, privacy and operational owners can agree when a person must intervene and what AI may do or receive. AI use remains conditional on those decisions.
+If an assumption proves false, the team may need to change the scope, design or delivery plan. That is why these checks matter before committing to the solution.
+
+
+
+Success measures tell us whether the new capability actually improves the referral process. They compare performance before and after the change.
+Measure	What it means in simple English
+Less follow-up / rework	What percentage of referrals need staff to chase information or correct problems? We want avoidable work to decrease.
+Faster turnaround	How long does a referral take to reach an agreed milestone, such as scheduling? We want that time to decrease.
+Clearer status and responsibility	For what percentage of checked referrals can staff see the current status and who is responsible? We want this percentage to increase.
+Fewer incomplete hand-offs	What percentage of referrals remain unresolved beyond an agreed time? We want this percentage to decrease.
+More complete action records	What percentage of checked hand-offs record what happened, when, who acted and the outcome? We want this percentage to increase.
+
+
+The other columns explain how to use each measure:
+- Definition / method: How it will be calculated.
+- Baseline: Today’s performance—the starting point. Only the scenario’s 15–20% follow-up/rework figure is available, and its scope still needs checking.
+- Target: The improvement the business agrees to aim for after measuring the baseline.
+- Data source / owner: Where the evidence may come from and who will be accountable for measuring it. Proposed sources and owners still need confirmation.
+For example, if 18 out of 100 referrals require manual follow-up, the rate is 18%. After introducing the capability, the team measures the same referral group using the same rules and compares the result.
+These are planned measurements, not improvements already achieved. Also, receiving a referral, scheduling an appointment and completing care are different milestones—they must be measured separately.
+
+
+
+
+
+The application is a local referral coordination workspace. It helps staff enter referrals, correct missing details, track hand-offs, record partner receipts and follow up on delays.
+Records and action history are saved in the same browser. The application records actions performed outside it; it does not send referrals to hospitals or partners.
+1. Add a referral
+Click Add referral and enter:
+- Referral ID — required.
+- Specialty.
+- Receiving provider.
+- Responsible person — required.
+If specialty or receiving provider is missing, the record is saved as Needs information. Once both are filled, it becomes Ready for hand-off.
+2. Correct missing information
+Click Edit details, fill the missing information and enter the person making the change.
+The application checks the details again and updates the status. Details can be edited only before a hand-off is recorded, so changes cannot silently invalidate a recorded hand-off.
+3. Record a hand-off
+First, complete the actual hand-off through the approved external process. Then click Record hand-off and enter the responsible person and hand-off reference.
+The application:
+- Changes the status to Awaiting receipt.
+- Records the time and reference.
+- Sets a follow-up deadline.
+- Increases the hand-off attempt count.
+This button records the hand-off—it does not transmit anything.
+4. Record partner receipt
+When the receiving provider confirms receipt, click Record receipt and enter the responsible person and confirmation reference.
+The status becomes Receipt recorded. This means receipt has been recorded by a person; the application does not independently verify it with the partner.
+Receipt is different from clinical acceptance, appointment scheduling or completed care.
+5. Handle an overdue referral
+If no receipt is recorded before the deadline, the status automatically becomes Follow-up overdue.
+The application uses real elapsed time. It also recalculates overdue status when the workspace is reopened. Staff can then:
+- Record a late receipt.
+- Add a follow-up note.
+- Approve another hand-off attempt.
+6. Approve and record a retry
+Click Approve retry and enter the responsible person and the reason another attempt is appropriate.
+The status becomes Retry approved. Staff must separately complete the external hand-off and record its reference. The application retains the same referral ID and increases the attempt count.
+If a late receipt arrives after retry approval, it can still be recorded. That removes the need for another hand-off in this workspace.
+The remaining use cases are:
+Use case	What the application does
+Add the same referral again	Retains one record and logs the duplicate.
+Add the same ID with different details	Rejects the conflicting details, preserves the original and records the rejection.
+Add a follow-up note	Saves an administrative note with the person and timestamp. The latest note appears on the referral card.
+Change follow-up time	Follow-up settings accepts 1–10,080 minutes. The default is 30 minutes. Changes apply only to future hand-offs; existing deadlines remain unchanged.
+Search records	Searches referral IDs, specialties and receiving providers.
+Filter by status	Shows only records in the selected status. Filtering does not delete anything.
+View workspace counts	Shows total records, records needing information, overdue follow-ups and recorded receipts.
+Inspect action history	Shows when an action occurred, the referral, action, person and recorded details.
+Export records	Downloads records, settings and history as a JSON file. Importing that file is not currently implemented.
+Refresh or reopen	Restores saved records in the same browser profile, provided browser storage has not been cleared.
+Add fictional examples	Adds three example referrals without replacing existing work. Loading them again does not create duplicates.
+Another tab changes the workspace	Loads changes when no form is open. If a form is open, warns the user; stale saves are rejected until reload.
+Saving fails	Reports the failure and leaves the existing records unchanged.
+Saved data cannot be read	Reports the problem and preserves the stored data rather than overwriting it.
+
+
+The status sequence is:
+Needs information → Ready for hand-off → Awaiting receipt → Receipt recorded
+If receipt is delayed:
+Awaiting receipt → Follow-up overdue → Retry approved → Awaiting receipt
+A late receipt can also move an overdue or retry-approved referral directly to Receipt recorded.
+For a short walkthrough, add an incomplete referral, correct it, set the follow-up to one minute, record a hand-off and wait for it to become overdue. Then approve a retry, record the second hand-off and record receipt. Finally, refresh to show that the record and history remain saved.
+The current scope does not include staff login, changing the assigned role, patient notifications, scheduling, clinical decisions, real system connections or a central shared database. Typed person names are recorded labels, and the local history is not a protected audit system.
+
+
+10:17 AM
+
+
+
+
+
+
+
+
+Provide some example records as well for each steps
+
+
+
+
+
+
+
+10:19 AM
+
+
+
+
+
+
+Use these fictional records to try each workflow. Enter Alex Rao as the responsible person. The references below are fictional practice values.
+Referral ID	Specialty	Receiving provider	Purpose
+PRACTICE-001	Cardiology	Example Heart Centre	Normal hand-off and receipt
+PRACTICE-002	Leave blank	Example Skin Clinic	Correct missing information
+PRACTICE-003	Orthopedics	Example Joint Centre	Overdue follow-up and retry
+PRACTICE-004	Neurology	Example Neuro Clinic	Late receipt
+PRACTICE-005	Dermatology	Example Skin Clinic	Duplicate and conflicting entry
+
+
+1. Normal workflow — PRACTICE-001
+1. Click Add referral, enter its details and save.
+   - Expected: Ready for hand-off.
+2. Click Record hand-off:
+   - Person: Alex Rao
+   - Reference: PRACTICE-HANDOFF-001
+   - Expected: Awaiting receipt, attempt count 1.
+3. Click Record receipt:
+   - Person: Alex Rao
+   - Confirmation reference: PRACTICE-RECEIPT-001
+   - Expected: Receipt recorded.
+For actual use, these references must come from actions and confirmations completed outside the application.
+2. Missing information — PRACTICE-002
+1. Add the record with specialty blank.
+   - Expected: Needs information; no hand-off button.
+2. Click Edit details:
+   - Specialty: Dermatology
+   - Person: Alex Rao
+3. Save.
+   - Expected: Ready for hand-off.
+4. You can now record a hand-off using PRACTICE-HANDOFF-002.
+3. Overdue referral and retry — PRACTICE-003
+Before recording its hand-off, open Follow-up settings:
+- Minutes: 1
+- Person: Alex Rao
+Then:
+1. Add PRACTICE-003 and record hand-off reference PRACTICE-HANDOFF-003-A.
+2. Do not record receipt. Wait approximately one minute.
+   - Expected: Follow-up overdue.
+3. Click Add follow-up note:
+   - Person: Alex Rao
+   - Note: Contacted receiving office; receipt confirmation is pending.
+4. Click Approve retry:
+   - Person: Alex Rao
+   - Reason: Receiving office confirmed the first hand-off was not received and requested another attempt.
+   - Expected: Retry approved.
+5. Record another hand-off: PRACTICE-HANDOFF-003-B.
+   - Expected: Awaiting receipt, attempt count 2.
+6. Record receipt: PRACTICE-RECEIPT-003.
+   - Expected: Receipt recorded, still one referral record.
+4. Late receipt — PRACTICE-004
+With the one-minute setting:
+1. Add the record and record hand-off PRACTICE-HANDOFF-004.
+2. Wait until Follow-up overdue.
+3. Record receipt PRACTICE-LATE-RECEIPT-004.
+   - Expected: Receipt recorded, attempt count 1.
+   - No retry is necessary.
+5. Duplicate and conflicting entry — PRACTICE-005
+1. Add PRACTICE-005 using the table’s details.
+2. Add the exact same ID and details again.
+   - Expected: the original remains; no second record is created.
+3. Add that ID again, but change the provider to Example Alternate Skin Clinic.
+   - Expected: conflicting details are rejected; the original provider remains.
+Inspect Action history to see both events.
+6. Check search, filters and saved data
+- Search PRACTICE-003 to find the retry case.
+- Search Cardiology to find PRACTICE-001.
+- Select Receipt recorded to show referrals with recorded receipts.
+- Refresh the page: records and history should remain.
+- Click Export records to download the workspace.
+To check required inputs, try recording a hand-off without a reference or approving a retry without a person or reason. The application should block the action.
+After practising, restore Follow-up settings to 30 minutes. This affects future hand-offs only. Recorded receipt never means completed care.
+
+
+
+1. **Install Python 3.10+ and Node.js 20+** on the new system. VS Code is optional; Codex is not required.
+
+2. **Download or clone your GitHub repository**, open the project folder, and open a terminal there.
+
+3. **Install dependencies** using PowerShell:
+
+   ```powershell
+   py -3 -m venv .venv
+   .\.venv\Scripts\python.exe -m pip install -r requirements.txt
+   npm ci
+   npm run install:browsers
+   ```
+
+4. **Create your environment file:**
+
+   ```powershell
+   Copy-Item .env.example .env
+   ```
+
+   Edit `.env` with your API key, base URL, available model IDs and model selection for each of the five agents.
+
+5. **Place your scenario HTML** in the `input` folder—for example, `input/new-scenario.html`.
+
+6. **Check the setup, then generate:**
+
+   ```powershell
+   .\.venv\Scripts\python.exe scripts/run_pipeline.py input/new-scenario.html --validate-only
+   .\.venv\Scripts\python.exe scripts/run_pipeline.py input/new-scenario.html
+   ```
+
+7. **Review the generated files** in the printed `output/runs/...` directory: D1–D5 Markdown files, POC and its README, architecture diagram, and final HTML/PDF report.
+
+8. **After reviewing the generated POC source, run its tests** and refresh the report with validation evidence:
+
+   ```powershell
+   .\.venv\Scripts\python.exe scripts/run_pipeline.py input/new-scenario.html --resume "output/runs/<actual-run-directory>" --execute-poc-tests
+   ```
+
+   Follow the POC’s README to launch and use it. Confirm the run status is **`complete`**.
+
+For every subsequent scenario, repeat **steps 5–8**. Keep `.env` and your API key out of GitHub.

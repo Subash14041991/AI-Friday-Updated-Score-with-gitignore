@@ -1,0 +1,15 @@
+.env
+.env.*
+!.env.example
+.venv/
+venv/
+node_modules/
+__pycache__/
+*.py[cod]
+.review/
+output/runs/
+npm-debug.log*
+playwright-report/
+test-results/
+.DS_Store
+Thumbs.db

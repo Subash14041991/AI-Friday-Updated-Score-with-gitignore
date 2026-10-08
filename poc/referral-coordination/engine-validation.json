@@ -1,0 +1,82 @@
+{
+  "executedAt": "2026-10-08T05:05:55.429Z",
+  "passed": 17,
+  "results": [
+    {
+      "name": "Incomplete entry can be corrected; hand-off blocked until complete",
+      "result": "PASS"
+    },
+    {
+      "name": "Records and history persist across reload",
+      "result": "PASS"
+    },
+    {
+      "name": "Actual elapsed time determines overdue state and recovery after closing",
+      "result": "PASS"
+    },
+    {
+      "name": "Retry requires overdue state, actor and reason; same record receives second attempt",
+      "result": "PASS"
+    },
+    {
+      "name": "External action recording requires references; receipt is not completion",
+      "result": "PASS"
+    },
+    {
+      "name": "Late receipt after retry approval cancels the need for a new hand-off",
+      "result": "PASS"
+    },
+    {
+      "name": "Duplicate identity retains original; conflicting details explicitly rejected",
+      "result": "PASS"
+    },
+    {
+      "name": "Post-hand-off edits blocked; follow-up notes remain attributable",
+      "result": "PASS"
+    },
+    {
+      "name": "Changing threshold affects future hand-offs only",
+      "result": "PASS"
+    },
+    {
+      "name": "Storage failure leaves in-memory and saved records unchanged",
+      "result": "PASS"
+    },
+    {
+      "name": "Concurrent tab writes rejected until reload",
+      "result": "PASS"
+    },
+    {
+      "name": "Unreadable saved data preserved; unavailable storage reported",
+      "result": "PASS"
+    },
+    {
+      "name": "Required actor and source ID rejected before saving",
+      "result": "PASS"
+    },
+    {
+      "name": "Same engine supports a non-healthcare configuration",
+      "result": "PASS"
+    },
+    {
+      "name": "Reset requires explicit confirmation and remains cleared after reload",
+      "result": "PASS"
+    },
+    {
+      "name": "Reset storage failure preserves workspace and other namespaces",
+      "result": "PASS"
+    },
+    {
+      "name": "Reset rejects a stale tab instead of removing newer work",
+      "result": "PASS"
+    }
+  ],
+  "artifactSha256": {
+    "workflow.js": "e3eb82224b1dbc3f306319be016f7124c6f7346f4f8a2477b17f8f0a59f2e669",
+    "app.js": "fbb5700dc4d795368a4c7fd71c16477d4b61788ace14541fa8877c261c201096",
+    "config.js": "a1abbfbc279de327fdf8fa7f5b4ad7474fb31f8a020b19789217058c6beacd55",
+    "index.html": "bbb73207fe5ecf0db13862ef622fe0479275d503e81fb861a51dc8ef06951231",
+    "styles.css": "d4dc6407ffd666a64908a939d3f00ee67e861a4dd3ea59b6bac35911b9c1342d"
+  },
+  "scope": "Local persistence and coordination rules; no external delivery or clinical validation."
+}

@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Referral tracking and staff follow-up — Demo</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #173047;
+      --muted: #5d7183;
+      --line: #d2dde5;
+      --bg: #f2f6f8;
+      --surface: #fff;
+      --accent: #087f8c;
+      --accent-bg: #e8f5f6;
+      --warn: #835800;
+      --warn-bg: #fff4dc;
+      --ok: #17634c;
+      --ok-bg: #e8f5ee;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; color: var(--ink); background: var(--bg); font: 15px/1.45 "Segoe UI", Arial, sans-serif; }
+    header { padding: 22px max(20px, calc((100% - 1050px) / 2)); background: #123148; color: white; }
+    header h1 { margin: 0 0 4px; font-size: 24px; }
+    header p { margin: 0; color: #d5e4eb; }
+    main { width: min(1050px, calc(100% - 32px)); margin: 18px auto; }
+    .notice { border: 1px solid #e5ca88; border-left: 5px solid #bd861a; border-radius: 6px; padding: 11px 13px; background: var(--warn-bg); color: #59400b; margin-bottom: 14px; }
+    .toolbar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: 14px 0; }
+    button { border: 0; border-radius: 5px; padding: 9px 14px; color: white; background: var(--accent); font: inherit; font-weight: 700; cursor: pointer; }
+    button:focus-visible { outline: 3px solid #76c9d0; outline-offset: 2px; }
+    #summary { color: var(--muted); }
+    .records { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .record { background: var(--surface); border: 1px solid var(--line); border-radius: 7px; padding: 13px; }
+    .record h2 { font-size: 16px; margin: 0 0 8px; }
+    .record p { margin: 4px 0; }
+    .state { margin-top: 9px; padding: 8px 9px; border-radius: 4px; background: var(--accent-bg); }
+    .state.received { background: var(--ok-bg); color: var(--ok); }
+    .state.follow-up { background: var(--warn-bg); color: var(--warn); }
+    .state.overdue { background:#ffe7e5; color:#8d2620; border-left:4px solid #c44236; }
+    .state.waiting { background:#e8efff; color:#304b82; }
+    .demo-guide { background:white; border:1px solid var(--line); border-radius:7px; padding:12px 16px; }
+    .demo-guide h2 { font-size:17px; margin:0 0 7px; }
+    .demo-guide ol { margin:0; padding-left:22px; }
+    .demo-guide li { margin:4px 0; }
+    input { display:block; width:100%; padding:8px; margin-top:4px; border:1px solid #8ca5b5; border-radius:4px; font:inherit; }
+    label { flex:1 1 180px; }
+    .next-action { font-size:14px; margin-top:8px!important; }
+    .note { color: var(--muted); font-size: 12px; }
+    @media (max-width: 680px) {
+      .records { grid-template-columns: 1fr; }
+      header { padding: 18px 16px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Referral tracking and staff follow-up</h1>
+    <p>Fictional-data demo · See progress, responsibility, and staff actions</p>
+  </header>
+  <main>
+    <div class="notice">
+      <strong>Demo only:</strong> Five fictional referrals; sends and receipts are simulated.
+      No hospital connection, clinical decision, or AI is used. Receipt does not mean care is complete.
+      <strong>Refresh or reset clears every record and action.</strong>
+    </div>
+    <section class="demo-guide" aria-label="Demo walkthrough">
+      <h2>What to demonstrate — about 3 minutes</h2>
+      <ol>
+        <li><strong>Load cases:</strong> three incomplete referrals are blocked; two can be sent.</li>
+        <li><strong>REF-SYN-001:</strong> simulate sending and partner receipt; the coordinator owns the next step.</li>
+        <li><strong>REF-SYN-005:</strong> simulate sending, then advance time. Enter a reviewer and reason, approve retry, send again, and simulate receipt.</li>
+        <li><strong>Replay REF-SYN-001:</strong> the record count stays at five. Read the action history below.</li>
+      </ol>
+    </section>
+    <div class="toolbar">
+      <button id="validate" type="button">Load demo cases</button><button id="advance" type="button">Advance simulated time: 3 ticks</button><button id="duplicate" type="button">Replay REF-SYN-001</button><button id="reset" type="button">Reset demo</button>
+      <span id="summary" aria-live="polite">Validation has not been run.</span>
+    </div>
+    <section id="records" class="records" aria-label="Synthetic referrals"></section>
+    <p class="note">The three-tick threshold is a demo rule, not a real response-time target. Missing information is detected here; correcting it is outside this POC.</p>
+  <h2>Action history</h2><pre id="audit" style="white-space:pre-wrap;overflow-wrap:anywhere"></pre><p class="note">History lasts only for this session. Reviewer labels demonstrate recorded decisions, not authenticated identity. No real delivery, clinical safety, or interoperability-standard compliance is proven.</p></main>
+  <script src="referral-workflow.js"></script>
+  <script>
+    'use strict';
+    let workflow = new ReferralWorkflow();
+    const samples = [
+      {id:'REF-SYN-001',specialty:'Cardiology',receiver:'Partner Alpha'},
+      {id:'REF-SYN-002',specialty:'',receiver:'Partner Beta'},
+      {id:'',specialty:'Orthopedics',receiver:'Partner Gamma'},
+      {id:'REF-SYN-004',specialty:'Neurology',receiver:''},
+      {id:'REF-SYN-005',specialty:'Cardiology',receiver:'Silent mock partner'}
+    ];
+    const escapeHtml = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    function render() {
+      const records = [...workflow.records.values()];
+      const blocked = records.filter(r => r.status === 'Needs information').length;
+      const overdue = records.filter(r => r.status === 'Acknowledgement overdue').length;
+      const receipts = records.filter(r => r.status === 'Partner acknowledged').length;
+      document.getElementById('summary').textContent = `${records.length} referrals · ${blocked} incomplete · ${overdue} overdue · ${receipts} receipts · time ${workflow.clock} ticks`;
+      document.getElementById('records').innerHTML = records.map(r => {
+        const stateClass = r.status === 'Partner acknowledged' ? 'received' : r.status === 'Needs information' ? 'follow-up' : r.status === 'Acknowledgement overdue' ? 'overdue' : r.status === 'Awaiting acknowledgement' ? 'waiting' : '';
+        const next = {
+          'Needs information':'Coordinator obtains missing details through the source process. Correction is outside this demo.',
+          'Ready to send':'Simulate sending to the receiving provider.',
+          'Awaiting acknowledgement':'Wait for simulated partner receipt or advance time to test a delay.',
+          'Acknowledgement overdue':'Coordinator follows up. Enter a reviewer and reason to approve another attempt.',
+          'Retry approved':'Simulate sending again with the same referral identity.',
+          'Partner acknowledged':'Coordinator follows the next agreed referral step. Receipt is not completed care.'
+        }[r.status];
+        return `<article class="record"><h2>${escapeHtml(r.key)}</h2><p>Specialty: ${escapeHtml(r.payload.specialty || 'Missing')}</p><p>Receiving provider: ${escapeHtml(r.payload.receiver || 'Missing')}</p><p>Responsible role: ${escapeHtml(r.owner)}; send attempts: ${r.attempts}</p><div class="state ${stateClass}">${escapeHtml(r.status)}${r.missing.length ? ': '+escapeHtml(r.missing.join(', ')) : ''}</div><p class="next-action"><strong>Next action:</strong> ${escapeHtml(next)}</p><div class="toolbar">${['Ready to send','Retry approved'].includes(r.status) ? `<button data-action="send" data-key="${escapeHtml(r.key)}">Simulate send</button>` : ''}${['Awaiting acknowledgement','Acknowledgement overdue'].includes(r.status) ? `<button data-action="ack" data-key="${escapeHtml(r.key)}">Simulate partner receipt</button>` : ''}${r.status === 'Acknowledgement overdue' ? `<label>Reviewer label <input data-actor="${escapeHtml(r.key)}" placeholder="Enter demo reviewer" autocomplete="off"></label><label>Follow-up / retry reason <input data-reason="${escapeHtml(r.key)}" placeholder="Explain why another attempt is approved" autocomplete="off"></label><button data-action="resolve" data-key="${escapeHtml(r.key)}">Approve retry</button>` : ''}</div></article>`;
+      }).join('');
+      document.getElementById('audit').textContent = workflow.events.map(e => `#${e.sequence} tick ${e.tick} | ${e.id} | ${e.action} | ${e.actor} | ${e.detail}`).join('\n') || 'No actions yet.';
+    }
+    document.getElementById('validate').onclick = () => { samples.forEach(r => workflow.intake(r)); render(); };
+    document.getElementById('advance').onclick = () => { workflow.advance(); render(); };
+    document.getElementById('duplicate').onclick = () => { workflow.intake(samples[0]); render(); };
+    document.getElementById('reset').onclick = () => { workflow = new ReferralWorkflow(); render(); };
+    document.getElementById('records').onclick = event => {
+      const button = event.target.closest('button[data-action]'); if (!button) return;
+      const key = button.dataset.key;
+      if (button.dataset.action === 'send') workflow.send(key);
+      if (button.dataset.action === 'ack') workflow.acknowledge(key, 'ACK-'+key);
+      if (button.dataset.action === 'resolve') {
+        const card = button.closest('article');
+        if (!workflow.resolve(key, card.querySelector('[data-actor]').value, card.querySelector('[data-reason]').value)) { alert('A reviewer and follow-up reason are required.'); return; }
+      }
+      render();
+    };
+    render();
+  </script>
+</body>
+</html>

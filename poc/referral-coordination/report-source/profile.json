@@ -1,0 +1,24 @@
+{
+  "response": "poc/referral-coordination/report-source/D4-template.md",
+  "sourceDirectory": "poc/referral-coordination",
+  "artifacts": [
+    "index.html",
+    "styles.css",
+    "config.js",
+    "workflow.js",
+    "app.js"
+  ],
+  "engineEvidence": "poc/referral-coordination/engine-validation.json",
+  "browserEvidence": "poc/referral-coordination/browser-validation.json",
+  "links": [
+    "../../poc/referral-coordination/index.html",
+    "../../poc/referral-coordination/README.md",
+    "../../poc/referral-coordination/engine-validation.json",
+    "../../poc/referral-coordination/browser-validation.json"
+  ],
+  "report": "output/healthcare/final-submission-report.html",
+  "markdown": "output/healthcare/D4-poc-validation.md",
+  "eyebrow": "Healthcare referral architecture · Deliverable 4 of 5",
+  "subtitle": "Working local coordination application · Verified behavior, learning, and limits.",
+  "footer": "Local persistence and recorded external actions · No verified partner transport or protected audit."
+}
